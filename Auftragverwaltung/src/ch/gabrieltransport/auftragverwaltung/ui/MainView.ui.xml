@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?import?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug?>
+<?import com.xdev.ui.XdevButton?>
+<?import com.xdev.ui.XdevGridLayout?>
+<?import com.xdev.ui.XdevHorizontalLayout?>
+<?import com.xdev.ui.XdevHorizontalSplitPanel?>
+<?import com.xdev.ui.XdevLabel?>
+<?import com.xdev.ui.XdevView?>
+<?import com.xdev.ui.entitycomponent.table.XdevTable?>
+<?import java.lang.String?>
+<XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="MainView">
+    <x:constraints designWidth="600" zpos="0" designHeight="400" width="100%" height="100%" />
+    <XdevGridLayout x:name="gridLayout">
+        <x:constraints zpos="0" width="100%" height="100%" />
+        <XdevHorizontalLayout x:name="horizontalLayout" margin="">
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" width="195px" alignment="MIDDLE_CENTER" height="40px" />
+            <XdevButton icon="FontAwesome.CARET_LEFT" caption="" x:name="button">
+                <x:constraints weightx="0.0" />
+                <x:event>click.buttonClick</x:event>
+            </XdevButton>
+            <XdevLabel x:name="lblWeek">
+                <x:constraints weightx="0.0" />
+            </XdevLabel>
+            <XdevButton icon="FontAwesome.CARET_RIGHT" caption="" x:name="button2">
+                <x:constraints weightx="0.0" />
+                <x:event>click.buttonClick</x:event>
+            </XdevButton>
+        </XdevHorizontalLayout>
+        <XdevHorizontalLayout x:name="horizontalLayout2" margin="">
+            <x:constraints gridx="1" gridy="2" weighty="0.0" weightx="0.0" width="195px" alignment="MIDDLE_CENTER" height="29px" />
+            <XdevLabel x:name="lblWeekInterval" value="01.08 - 07.08">
+                <x:constraints weightx="0.0" />
+            </XdevLabel>
+            <XdevHorizontalSplitPanel x:name="horizontalSplitPanel" splitPosition="2.0">
+                <x:constraints weightx="1.0" width="15%" height="100%" />
+            </XdevHorizontalSplitPanel>
+            <XdevLabel x:name="lblYear" value="2016">
+                <x:constraints weightx="0.0" />
+            </XdevLabel>
+        </XdevHorizontalLayout>
+        <XdevTable x:name="table" columnCollapsingAllowed="true" x:entity="Fahrzeug">
+            <x:entityProperties>
+                <entry type="int" property="idfahrzeug" caption="#" width="25" />
+                <entry type="String" property="kennzeichen" caption="Kennzeichen" width="90" />
+                <entry type="String" property="gewicht" width="75" />
+                <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Donnerstag" caption="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Freitag" caption="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Samstag" caption="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+                <entry type="" property="Sonntag" caption="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayGuiGenerator.Generator" />
+            </x:entityProperties>
+            <x:constraints gridx="1" gridy="3" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <x:typeArguments>
+                <typeArgument type="Fahrzeug" />
+            </x:typeArguments>
+        </XdevTable>
+    </XdevGridLayout>
+</XdevView>
+

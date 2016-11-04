@@ -1,0 +1,9 @@
+@import "addons.scss";
+@import "Auftragverwaltung.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in Auftragverwaltung.scss */
+.Auftragverwaltung {
+  @include addons;
+  @include Auftragverwaltung;
+}

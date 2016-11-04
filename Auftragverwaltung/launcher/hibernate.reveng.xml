@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+
+<hibernate-reverse-engineering>
+    <type-mapping>
+        <sql-type jdbc-type="INTEGER" not-null="true" hibernate-type="int" />
+        <sql-type jdbc-type="INTEGER" hibernate-type="java.lang.Integer" />
+        <sql-type jdbc-type="TINYINT" precision="1" not-null="true" hibernate-type="boolean" />
+        <sql-type jdbc-type="TINYINT" precision="1" hibernate-type="java.lang.Boolean" />
+        <sql-type jdbc-type="TINYINT" not-null="true" hibernate-type="short" />
+        <sql-type jdbc-type="TINYINT" hibernate-type="java.lang.Short" />
+    </type-mapping>
+    <table-filter match-catalog="gabrieltransport" match-name="role" />
+    <table-filter match-catalog="gabrieltransport" match-name="user" />
+    <table-filter match-catalog="gabrieltransport" match-name="fahrzeug" />
+    <table-filter match-catalog="gabrieltransport" match-name="fahrzeugauftrag" />
+    <table-filter match-catalog="gabrieltransport" match-name="resource" />
+    <table-filter match-catalog="gabrieltransport" match-name="auftrag" />
+    <table-filter match-catalog="gabrieltransport" match-name="fahrer" />
+    <table-filter match-catalog="gabrieltransport" match-name="fahrerauftrag" />
+    <table-filter match-catalog="gabrieltransport" match-name="rolerolenm" />
+    <table-filter match-catalog="gabrieltransport" match-name="roleresourcenm" />
+    <table-filter match-catalog="gabrieltransport" match-name="userrolenm" />
+    <table catalog="gabrieltransport" name="role" class="ch.gabrieltransport.auftragverwaltung.entities.Role" />
+    <table catalog="gabrieltransport" name="user" class="ch.gabrieltransport.auftragverwaltung.entities.User" />
+    <table catalog="gabrieltransport" name="fahrzeug" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug" />
+    <table catalog="gabrieltransport" name="fahrzeugauftrag" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag" />
+    <table catalog="gabrieltransport" name="resource" class="ch.gabrieltransport.auftragverwaltung.entities.Resource" />
+    <table catalog="gabrieltransport" name="auftrag" class="ch.gabrieltransport.auftragverwaltung.entities.Auftrag" />
+    <table catalog="gabrieltransport" name="fahrer" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrer" />
+    <table catalog="gabrieltransport" name="fahrerauftrag" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag" />
+    <table catalog="gabrieltransport" name="rolerolenm" />
+    <table catalog="gabrieltransport" name="roleresourcenm" />
+    <table catalog="gabrieltransport" name="userrolenm" />
+</hibernate-reverse-engineering>
+
