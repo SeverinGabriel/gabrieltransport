@@ -76,7 +76,7 @@ public class Fahrzeug implements java.io.Serializable {
 	}
 
 	@Caption("Fahrzeugauftrags")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "fahrzeug")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "fahrzeug")
 	public Set<Fahrzeugauftrag> getFahrzeugauftrags() {
 		return this.fahrzeugauftrags;
 	}

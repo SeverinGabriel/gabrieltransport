@@ -98,7 +98,7 @@ public class Auftrag implements java.io.Serializable {
 	}
 
 	@Caption("Fahrerauftrags")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "auftrag", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "auftrag", cascade = CascadeType.ALL)
 	public Set<Fahrerauftrag> getFahrerauftrags() {
 		return this.fahrerauftrags;
 	}
@@ -108,7 +108,7 @@ public class Auftrag implements java.io.Serializable {
 	}
 
 	@Caption("Fahrzeugauftrags")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "auftrag", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "auftrag", cascade = CascadeType.ALL)
 	public Set<Fahrzeugauftrag> getFahrzeugauftrags() {
 		return this.fahrzeugauftrags;
 	}

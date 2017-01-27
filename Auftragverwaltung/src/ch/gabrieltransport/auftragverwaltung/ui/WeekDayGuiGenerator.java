@@ -17,9 +17,9 @@ import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.XdevVerticalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-import ch.gabrieltransport.auftragverwaltung.business.facade.AuftragServiceFacade;
-import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
+import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayGuiGenerator extends XdevHorizontalLayout{
@@ -64,7 +64,7 @@ public class WeekDayGuiGenerator extends XdevHorizontalLayout{
 
 	@SuppressWarnings("unchecked")
 	public Fahrzeug getBean() {
-		return ((XdevTable<Fahrzeug>) getTable()).getContainerDataSource().getItem(getItemId()).getBean();
+		return ((XdevTable<Fahrzeug>) getTable()).getBeanContainerDataSource().getItem(getItemId()).getBean();
 	}
 
 	
@@ -131,11 +131,11 @@ public class WeekDayGuiGenerator extends XdevHorizontalLayout{
 	
 	public void update() {
 		verticalLayout2.removeAllComponents();
-		final AuftragServiceFacade auftragServiceFacade = new AuftragServiceFacade();
-		List<Auftrag> auftraege = auftragServiceFacade.findAuftrageon(getDateForDay(), getBean());
-		for(Auftrag auftrag: auftraege){
+		final FahrzeugauftragDAO auftragServiceFacade = new FahrzeugauftragDAO();
+		List<Fahrzeugauftrag> auftraege = auftragServiceFacade.findAuftrageon(getDateForDay(), getBean());
+		for(Fahrzeugauftrag auftrag: auftraege){
 			XdevButton auftragField = new XdevButton();
-			auftragField.setCaption(auftrag.getBezeichung());
+			auftragField.setCaption(auftrag.getAuftrag().getBezeichung());
 			auftragField.addStyleName("borderless");
 			auftragField.setSizeFull();
 			auftragField.addClickListener(new ClickListener() {
@@ -148,7 +148,15 @@ public class WeekDayGuiGenerator extends XdevHorizontalLayout{
 					win.center();
 					
 					win.setModal(true);
-					win.setContent(new taskDetail(auftrag));
+					taskDetail taskWindow = new taskDetail(auftrag,
+							   new taskDetail.Callback() {
+							      public void onDialogResult(boolean result) {
+							    	  update();
+							    	  customizedTable.refreshRowCache();
+							    	  
+							      }
+							   });
+					win.setContent(taskWindow);
 					getUI().addWindow(win);
 					
 				}

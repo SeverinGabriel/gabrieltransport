@@ -46,7 +46,8 @@ public class AuftragDAO extends JPADAO<Auftrag, Integer> {
 		String hql = "Select a FROM Fahrzeugauftrag fa inner join fa.auftrag a " + 
 				"where fa.fahrzeug = :fahrzeug and " + 
 				"((:dateFrom BETWEEN fa.vonDatum AND fa.bisDatum OR :dateUntil BETWEEN fa.vonDatum AND fa.bisDatum) " +
-				"OR (fa.vonDatum BETWEEN :dateFrom AND :dateUntil OR fa.bisDatum BETWEEN :dateFrom AND :dateUntil))";
+				"OR (fa.vonDatum BETWEEN :dateFrom AND :dateUntil OR fa.bisDatum BETWEEN :dateFrom AND :dateUntil))"
+				+ " ORDER BY fa.vonDatum";
 		List<Auftrag> auftraege = session.createQuery(hql)
 				.setParameter("fahrzeug", fahrzeug)
 				.setParameter("dateFrom",date)

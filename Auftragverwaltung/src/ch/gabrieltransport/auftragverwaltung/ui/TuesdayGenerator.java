@@ -55,7 +55,7 @@ public class TuesdayGenerator extends XdevHorizontalLayout {
 
 	@SuppressWarnings("unchecked")
 	public Fahrzeug getBean() {
-		return ((XdevTable<Fahrzeug>) getTable()).getContainerDataSource().getItem(getItemId()).getBean();
+		return ((XdevTable<Fahrzeug>) getTable()).getBeanContainerDataSource().getItem(getItemId()).getBean();
 	}
 
 	/**

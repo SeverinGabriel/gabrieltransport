@@ -1,8 +1,11 @@
 package ch.gabrieltransport.auftragverwaltung.ui;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 import com.vaadin.data.Property;
@@ -41,25 +44,35 @@ public class taskDetail extends XdevView {
 	/**
 	 * 
 	 */
+	private static final String time_day = "Ganztägig";
+	private static final String time_morning = "Vormittag"; 
+	private static final String time_afternoon = "Nachmittag";
+	private static final String time_specific = "Spezifische Zeit"; 
+	
 	private Auftrag currentTask = new Auftrag();
+	private Fahrzeugauftrag fahrzeugAuftrag = new Fahrzeugauftrag();
 	private Callback callback;
 	private AuftragServiceFacade auftragServiceFacade = new AuftragServiceFacade();
 	public taskDetail() {
 		super();
 		this.initUI();
-		optionGroup.addItem("Ganztägig");
-		optionGroup.addItem("Vormittag");
-		optionGroup.addItem("Nachmittag");
-		optionGroup.addItem("Spezifische Zeit");
-		
-		
+		optionGroup.addItems(time_day, time_morning, time_afternoon, time_specific);
 		
 	}
-	public taskDetail(Auftrag auftrag) {
+	public taskDetail(Fahrzeugauftrag auftrag, Callback callback) {
 		this();
-		currentTask = auftrag;
+		this.callback = callback;
+		currentTask = auftrag.getAuftrag();
+		this.
+			fahrzeugAuftrag = auftrag;
+			fromDate.setValue(Date.from(fahrzeugAuftrag.getVonDatum().atZone(ZoneId.systemDefault()).toInstant()));
+			untilDate.setValue(Date.from(fahrzeugAuftrag.getBisDatum().atZone(ZoneId.systemDefault()).toInstant()));
+			cmbVehicle.select(fahrzeugAuftrag.getFahrzeug().getIdfahrzeug());
+			setTime(fahrzeugAuftrag.getVonDatum(), fahrzeugAuftrag.getBisDatum());
+		
 		BeanItem<Auftrag> test = new BeanItem<Auftrag>(currentTask);
 		txtDescription.setPropertyDataSource(test.getItemProperty("bezeichung"));
+		
 		
 	}
 	public taskDetail(LocalDateTime ldt, Fahrzeug fz, Callback callback) {
@@ -119,6 +132,8 @@ public class taskDetail extends XdevView {
 	 */
 	private void button3_buttonClick(Button.ClickEvent event) {
 		auftragServiceFacade.deleteAuftrag(currentTask);
+		callback.onDialogResult(true);
+		((Window)this.getParent()).close();
 		
 	}
 	/**
@@ -130,16 +145,60 @@ public class taskDetail extends XdevView {
 	 */
 	private void btnSave_buttonClick(Button.ClickEvent event) {
 		currentTask.setBezeichung(txtDescription.getValue());
-		LocalDateTime ldt = LocalDateTime.ofInstant(untilDate.getValue().toInstant(), ZoneId.systemDefault());
+		
+		LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDateTime ldt = LocalDateTime.of(ldUntil, getTime(false));
 		currentTask.setBisDatum(ldt);
-		ldt = LocalDateTime.ofInstant(fromDate.getValue().toInstant(), ZoneId.systemDefault());
+		ldt = LocalDateTime.of(ldFrom, getTime(true));
 		currentTask.setVonDatum(ldt);
 		Set<Fahrzeugauftrag> fahrzeugauftraege = currentTask.getFahrzeugauftrags();
 		
 		
 		auftragServiceFacade.persistAuftrag(currentTask, cmbVehicle.getSelectedItem().getBean(), null);
 		callback.onDialogResult(true);
+		((Window)this.getParent()).close();
+		
 	}
+	
+	private LocalTime getTime(boolean start){
+		if(optionGroup.getValue() != null){
+			if(optionGroup.getValue().toString() == time_day){
+				return LocalTime.parse("00:00");
+			}
+			else if(optionGroup.getValue().toString() == time_morning){
+				return (start ? LocalTime.parse("08:00") : LocalTime.parse("12:00"));
+				
+			}
+			else if(optionGroup.getValue().toString() == time_afternoon){
+				return (start ? LocalTime.parse("13:00") : LocalTime.parse("18:00"));
+			}
+			else {
+				return (start ? LocalTime.parse(lblTimeFrom.getValue()) : LocalTime.parse(txtTimeUntil.getValue()));
+				
+			}
+		}else{
+			return LocalTime.parse("00:00");
+		}
+	}
+	private void setTime(LocalDateTime start, LocalDateTime end){
+		if(start.getHour() == 0 && end.getHour() == 0){
+			optionGroup.setValue(time_day);
+		}
+		else if(start.getHour() == 8  && end.getHour() == 12){
+			optionGroup.setValue(time_morning);
+		}
+		else if(start.getHour() == 13  && end.getHour() == 18){
+			optionGroup.setValue(time_afternoon);
+		}
+		else {
+			optionGroup.setValue(time_specific);
+			txtTimeUntil.setValue(end.getHour() + ":" + end.getMinute());
+			lblTimeFrom.setValue(start.getHour() + ":" + start.getMinute());
+		}
+		
+	}
+	
 	/*
 	 * WARNING: Do NOT edit!<br>The content of this method is always regenerated
 	 * by the UI designer.
@@ -345,6 +404,7 @@ public class taskDetail extends XdevView {
 		btnSave.addClickListener(event -> this.btnSave_buttonClick(event));
 		btnCancel.addClickListener(event -> this.btnCancel_buttonClick(event));
 	} // </generated-code>
+
 	// <generated-code name="variables">
 	private XdevPopupDateField fromDate, untilDate;
 	private XdevHorizontalLayout horizontalLayout4, horizontalLayout, horizontalLayout3, horizontalLayout2,
