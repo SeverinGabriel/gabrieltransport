@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?import com.xdev.ui.XdevHorizontalLayout?>
+<?import com.xdev.ui.XdevPanel?>
+<XdevHorizontalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" spacing="false" x:name="WeekDayEmployeeColumn" margin="">
+    <x:constraints designWidth="213" zpos="0" designHeight="80" width="100%" height="100%" />
+    <x:event>layoutClick.layoutClick</x:event>
+    <XdevPanel x:name="panel">
+        <x:constraints weightx="0.6" width="100%" height="25px" />
+    </XdevPanel>
+</XdevHorizontalLayout>
+

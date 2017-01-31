@@ -41,18 +41,7 @@ public class FahrzeugauftragDAO extends JPADAO<Fahrzeugauftrag, Integer> {
 				.setParameter("fahrzeug", fahrzeug)
 				.setParameter("dateFrom",date)
 				.setParameter("dateUntil", dateUntil)
-				.list();
-		
-		
-		
-		
-		//Query q = this.em().createQuery("SELECT a FROM Fahrzeugauftrag fa "
-			//	+ "inner join fa.auftrag a "
-			//	+ "where fa.fahrzeug = :fahrzeug and ((:dateFrom BETWEEN fa.vonDatum AND fa.bisDatum OR :dateUntil BETWEEN fa.vonDatum AND fa.bisDatum) OR (fa.vonDatum BETWEEN :dateFrom AND :dateUntil OR fa.bisDatum BETWEEN :dateFrom AND :dateUntil))");
-			
-		//q.setParameter("fahrzeug", fahrzeug);
-		
-		
+				.list();		
 		return auftraege;
 	}
 }

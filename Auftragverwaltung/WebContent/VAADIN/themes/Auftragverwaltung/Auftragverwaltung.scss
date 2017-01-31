@@ -187,5 +187,12 @@ $v-panel-border: 2px solid v-shade;
 @mixin Auftragverwaltung {
   @include valo;
 
-  // Insert your own theme rules here
+  .green{
+  background: green;}
+  .red{
+  background: red;}
+  .yellow{
+  background: yellow;}
+  .orange{
+  background: orange;}
 }

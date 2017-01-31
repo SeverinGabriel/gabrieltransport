@@ -47,7 +47,7 @@ public class AuftragServiceFacade {
 		}
 	}
 	
-	@Transactional
+	/*@Transactional
 	public List<Auftrag> findAuftrageon(LocalDateTime date, Fahrzeug fahrzeug){
 		try{
 	    	
@@ -59,5 +59,5 @@ public class AuftragServiceFacade {
 		}
 		return null;
 		
-	}
+	}*/
 }

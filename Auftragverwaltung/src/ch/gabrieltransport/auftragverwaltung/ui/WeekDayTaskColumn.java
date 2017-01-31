@@ -22,13 +22,13 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
-public class WeekDayGuiGenerator extends XdevHorizontalLayout{
+public class WeekDayTaskColumn extends XdevHorizontalLayout{
 
 	public static class Generator implements ColumnGenerator {
 		@Override
 		public Object generateCell(Table table, Object itemId, Object columnId) {
 
-			return new WeekDayGuiGenerator(table, itemId, columnId);
+			return new WeekDayTaskColumn(table, itemId, columnId);
 		}
 	}
 
@@ -37,7 +37,7 @@ public class WeekDayGuiGenerator extends XdevHorizontalLayout{
 	private final Object columnId;
 	
 
-	private WeekDayGuiGenerator(Table customizedTable, Object itemId, Object columnId) {
+	private WeekDayTaskColumn(Table customizedTable, Object itemId, Object columnId) {
 		super();
 
 		this.customizedTable = customizedTable;
@@ -190,15 +190,10 @@ public class WeekDayGuiGenerator extends XdevHorizontalLayout{
 		this.setComponentAlignment(this.verticalLayout, Alignment.MIDDLE_CENTER);
 		this.setExpandRatio(this.verticalLayout, 0.1F);
 		this.setWidth(100, Unit.PERCENTAGE);
-		this.setHeight(160, Unit.PIXELS);
+		this.setHeight(161, Unit.PIXELS);
 	
 		this.addContextClickListener(event -> this.this_contextClick(event));
 	} // </generated-code>
-
-	
-		
-
-
 
 	// <generated-code name="variables">
 	private XdevVerticalLayout verticalLayout, verticalLayout2; // </generated-code>

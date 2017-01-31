@@ -20,7 +20,7 @@ public class BOFahrzeugAuftragService {
 		fahrzeugAuftragDAO.persist(fahrzeugA);
 	}
 	
-	public List<Fahrzeugauftrag> findFahrzeugAuftrageon(LocalDateTime date, Fahrzeug fahrzeug){
+	/*public List<Fahrzeugauftrag> findFahrzeugAuftrageon(LocalDateTime date, Fahrzeug fahrzeug){
     	List<Fahrzeugauftrag> auftraege = new ArrayList<Fahrzeugauftrag>();
     	try{
 	    	
@@ -31,5 +31,5 @@ public class BOFahrzeugAuftragService {
 			fahrzeugAuftragDAO.rollback();
     	}
     	return auftraege;
-    }
+    }*/
 }
