@@ -27,10 +27,13 @@ public class BOAuftragService {
 	        
     }
     
-    public final void persistAuftrag(final Auftrag auftrag, Fahrzeugauftrag fzA){
+    public final void persistAuftrag(final Auftrag auftrag){
     		
     		auftragDAO.persist(auftrag);
-    		fahrzeugAuftragService.persistFahrzeugAuftrag(fzA);
+    		
+    }
+    public final Auftrag mergeAuftrag(final Auftrag auftrag){
+    	return auftragDAO.merge(auftrag);
     }
     
     public List<Auftrag> findAuftrageon(LocalDateTime date, Fahrzeug fahrzeug){

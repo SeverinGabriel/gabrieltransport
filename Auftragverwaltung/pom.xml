@@ -14,6 +14,7 @@
 				<excludes>
 					<exclude>**/*.java</exclude>
 					<exclude>**/*.ui.xml</exclude>
+					<exclude>**/*.jpasql</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -25,6 +26,11 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<annotationProcessors>
+						<annotationProcessor>
+							org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+						</annotationProcessor>
+					</annotationProcessors>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -42,7 +48,7 @@
 		<repository>
 			<id>vaadin-addons</id>
 			<url>http://maven.vaadin.com/vaadin-addons</url>
-			
+
 		</repository>
 		<repository>
 			<id>ossrh-snapshots</id>
@@ -85,18 +91,18 @@
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
-        <groupId>javax.transaction</groupId>
-        <artifactId>javax.transaction-api</artifactId>
-        <version>1.2</version>
- 		</dependency>
- 		<dependency>
-   			<groupId>org.vaadin.addons</groupId>
-   			<artifactId>stackpanel-extension-for-vaadin</artifactId>
-   			<version>1.0.1</version>
+			<groupId>javax.transaction</groupId>
+			<artifactId>javax.transaction-api</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>stackpanel-extension-for-vaadin</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 
 
-		
+
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>

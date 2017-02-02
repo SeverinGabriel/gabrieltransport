@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?template BROWSER_WSXGA?>
+<?import ??>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag?>
+<?import com.xdev.ui.XdevGridLayout?>
+<?import com.xdev.ui.XdevHorizontalLayout?>
+<?import com.xdev.ui.XdevPopupDateField?>
+<?import com.xdev.ui.XdevView?>
+<?import com.xdev.ui.entitycomponent.combobox.XdevComboBox?>
+<?import com.xdev.ui.entitycomponent.table.XdevTable?>
+<?import java.lang.String?>
+<?import java.time.LocalDateTime?>
+<XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="driverDetail">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <XdevGridLayout x:name="gridLayout">
+        <x:constraints zpos="0" width="100%" height="100%" />
+        <XdevHorizontalLayout x:name="horizontalLayout">
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" width="100%" height="100px" />
+            <XdevComboBox x:name="comboBox">
+                <x:constraints gridHeight="1" gridx="2" gridy="1" weighty="0.0" weightx="0.0" alignment="TOP_LEFT" gridWidth="1" />
+                <x:typeArguments>
+                    <typeArgument type="?" />
+                </x:typeArguments>
+            </XdevComboBox>
+            <XdevPopupDateField x:name="popupDateField">
+                <x:constraints weightx="0.0" />
+            </XdevPopupDateField>
+            <XdevPopupDateField x:name="popupDateField2">
+                <x:constraints weightx="0.0" />
+            </XdevPopupDateField>
+        </XdevHorizontalLayout>
+        <XdevTable x:name="table" x:entity="Fahrerauftrag" x:autoQuery="false">
+            <x:entityProperties>
+                <entry type="String" property="auftrag.bezeichung" />
+                <entry type="LocalDateTime" property="vonDatum" />
+                <entry type="LocalDateTime" property="bisDatum" />
+            </x:entityProperties>
+            <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <x:typeArguments>
+                <typeArgument type="Fahrerauftrag" />
+            </x:typeArguments>
+        </XdevTable>
+    </XdevGridLayout>
+</XdevView>
+

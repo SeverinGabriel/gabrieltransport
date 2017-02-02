@@ -44,4 +44,11 @@ public class FahrerauftragDAO extends JPADAO<Fahrerauftrag, Integer> {
 				.list();
 		return auftraege;
 	}
+	
+	public void deleteAuftragbyID(int taskID){
+		Session session = this.getSession(); 
+		String hql = "DELETE FROM Fahrerauftrag fa WHERE fa.auftrag.idAuftrag = :id";
+		session.createQuery(hql).setParameter("id", taskID).executeUpdate();
+				
+	}
 }

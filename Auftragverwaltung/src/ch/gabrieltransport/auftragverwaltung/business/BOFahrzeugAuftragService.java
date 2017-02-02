@@ -20,16 +20,9 @@ public class BOFahrzeugAuftragService {
 		fahrzeugAuftragDAO.persist(fahrzeugA);
 	}
 	
-	/*public List<Fahrzeugauftrag> findFahrzeugAuftrageon(LocalDateTime date, Fahrzeug fahrzeug){
-    	List<Fahrzeugauftrag> auftraege = new ArrayList<Fahrzeugauftrag>();
-    	try{
-	    	
-	    	auftraege = fahrzeugAuftragDAO.findAuftrageon(date, fahrzeug);
-	    	
-    	}catch(Exception e){
-			System.err.println(e.getMessage());
-			fahrzeugAuftragDAO.rollback();
-    	}
-    	return auftraege;
-    }*/
+	public void deleteAllFromAuftrag(Auftrag auftrag){
+		for(Fahrzeugauftrag fzA: auftrag.getFahrzeugauftrags()){
+			fahrzeugAuftragDAO.remove(fzA);
+		}
+	}
 }
