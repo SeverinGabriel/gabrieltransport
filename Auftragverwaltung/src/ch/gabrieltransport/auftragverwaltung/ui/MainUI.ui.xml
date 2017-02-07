@@ -2,17 +2,18 @@
 <!DOCTYPE xml>
 
 <?xdevuiml version="1.0"?>
+<?template NONE?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.LoginAuthView?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.MainView?>
 <?import com.xdev.security.authorization.ui.XdevAuthorizationNavigator?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevUI?>
 <XdevUI xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="MainUI">
-    <x:constraints designWidth="938" zpos="0" designHeight="597" width="100%" height="100%" />
+    <x:constraints zpos="0" width="100%" height="100%" />
     <XdevGridLayout x:name="gridLayout">
         <x:constraints zpos="0" width="100%" height="100%" />
     </XdevGridLayout>
-    <XdevAuthorizationNavigator redirectViewName="home" x:name="navigator" x:singleComponentContainer="MainUI">
+    <XdevAuthorizationNavigator redirectViewName="home" x:target="MainUI" x:name="navigator" x:singleComponentContainer="MainUI">
         <x:views>
             <entry path="" class="LoginAuthView" />
             <entry path="home" class="MainView" />

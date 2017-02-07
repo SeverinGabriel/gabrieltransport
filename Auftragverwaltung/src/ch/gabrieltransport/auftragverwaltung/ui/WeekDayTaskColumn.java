@@ -17,11 +17,12 @@ import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.XdevVerticalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
+import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
+import ch.gabrieltransport.auftragverwaltung.business.refresher.GuiListenerSingleton;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
-import ch.gabrieltransport.auftragverwaltung.ui.refresher.GuiListenerSingleton;
 
 public class WeekDayTaskColumn extends XdevHorizontalLayout{
 
@@ -112,7 +113,8 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 		taskDetail taskWindow = new taskDetail(getDateForDay(), getBean(),
 				   new taskDetail.Callback() {
 				      public void onDialogResult(boolean result) {
-				    	  GuiListenerSingleton.getInstance().updated();
+				    	  //GuiListenerSingleton.getInstance().updated();
+				    	  Broadcaster.broadcast("test");
 				      }
 				   });
 		win.setWidth("800");
@@ -153,7 +155,8 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 							   new taskDetail.Callback() {
 							      public void onDialogResult(boolean result) {
 							    	  update();
-							    	  GuiListenerSingleton.getInstance().updated();
+							    	  //GuiListenerSingleton.getInstance().updated();
+							    	  Broadcaster.broadcast("test");
 							    	  
 							      }
 							   });

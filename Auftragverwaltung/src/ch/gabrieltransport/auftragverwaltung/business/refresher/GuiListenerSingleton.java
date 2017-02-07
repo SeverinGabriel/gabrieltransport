@@ -1,4 +1,4 @@
-package ch.gabrieltransport.auftragverwaltung.ui.refresher;
+package ch.gabrieltransport.auftragverwaltung.business.refresher;
 
 import java.util.Observable;
 
@@ -15,7 +15,9 @@ public class GuiListenerSingleton extends Observable {
 	   }
 	   
 	   public void updated(){
+		   
 		   this.setChanged();
 		   this.notifyObservers();
 	   }
+	   
 	}

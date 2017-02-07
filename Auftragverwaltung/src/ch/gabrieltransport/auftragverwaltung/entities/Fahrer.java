@@ -7,14 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
+import com.xdev.dal.DAO;
+import com.xdev.util.Caption;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.xdev.dal.DAO;
-import com.xdev.util.Caption;
-
-import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
 
 /**
  * Fahrer
@@ -29,7 +28,7 @@ public class Fahrer implements java.io.Serializable {
 	private String nachname;
 	private String vorname;
 	private String telefon;
-	private Set<Fahrerauftrag> fahrerauftrags = new HashSet<Fahrerauftrag>(0);
+	private Set<Fahrerfunktionmap> fahrerfunktionmaps = new HashSet<Fahrerfunktionmap>(0);
 
 	public Fahrer() {
 	}
@@ -39,18 +38,18 @@ public class Fahrer implements java.io.Serializable {
 		this.vorname = vorname;
 	}
 
-	public Fahrer(String nachname, String vorname, String telefon, Set<Fahrerauftrag> fahrerauftrags) {
+	public Fahrer(String nachname, String vorname, String telefon, Set<Fahrerfunktionmap> fahrerfunktionmaps) {
 		this.nachname = nachname;
 		this.vorname = vorname;
 		this.telefon = telefon;
-		this.fahrerauftrags = fahrerauftrags;
+		this.fahrerfunktionmaps = fahrerfunktionmaps;
 	}
 
 	@Caption("Idfahrer")
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 
-	@Column(name = "idfahrer", unique = true, nullable = false)
+	@Column(name = "idfahrer", unique = true, nullable = false, columnDefinition = "INT")
 	public int getIdfahrer() {
 		return this.idfahrer;
 	}
@@ -60,7 +59,7 @@ public class Fahrer implements java.io.Serializable {
 	}
 
 	@Caption("Nachname")
-	@Column(name = "Nachname", nullable = false, length = 45)
+	@Column(name = "Nachname", nullable = false, columnDefinition = "VARCHAR", length = 45)
 	public String getNachname() {
 		return this.nachname;
 	}
@@ -70,7 +69,7 @@ public class Fahrer implements java.io.Serializable {
 	}
 
 	@Caption("Vorname")
-	@Column(name = "Vorname", nullable = false, length = 45)
+	@Column(name = "Vorname", nullable = false, columnDefinition = "VARCHAR", length = 45)
 	public String getVorname() {
 		return this.vorname;
 	}
@@ -80,7 +79,7 @@ public class Fahrer implements java.io.Serializable {
 	}
 
 	@Caption("Telefon")
-	@Column(name = "Telefon", length = 45)
+	@Column(name = "Telefon", columnDefinition = "VARCHAR", length = 45)
 	public String getTelefon() {
 		return this.telefon;
 	}
@@ -89,14 +88,14 @@ public class Fahrer implements java.io.Serializable {
 		this.telefon = telefon;
 	}
 
-	@Caption("Fahrerauftrags")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "fahrer")
-	public Set<Fahrerauftrag> getFahrerauftrags() {
-		return this.fahrerauftrags;
+	@Caption("Fahrerfunktionmaps")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "fahrer")
+	public Set<Fahrerfunktionmap> getFahrerfunktionmaps() {
+		return this.fahrerfunktionmaps;
 	}
 
-	public void setFahrerauftrags(Set<Fahrerauftrag> fahrerauftrags) {
-		this.fahrerauftrags = fahrerauftrags;
+	public void setFahrerfunktionmaps(Set<Fahrerfunktionmap> fahrerfunktionmaps) {
+		this.fahrerfunktionmaps = fahrerfunktionmaps;
 	}
 
 }

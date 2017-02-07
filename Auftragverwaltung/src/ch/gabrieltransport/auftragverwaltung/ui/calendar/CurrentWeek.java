@@ -7,9 +7,9 @@ import java.util.Observable;
 import com.vaadin.server.VaadinService;
 
 public class CurrentWeek extends Observable {	
-		
+	private Week weekMember;
 	public CurrentWeek(){
-		
+		weekMember = new Week();
 	}
 	
 	public void setNextWeek(){
@@ -28,13 +28,19 @@ public class CurrentWeek extends Observable {
 	}
 	
 	public Week getCurrentWeek(){
+		
+		if (VaadinService.getCurrentRequest() == null){
+			return weekMember;
+		}else{
 		if ((Week) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("week") == null){
 			setCurrentWeek(new Week());
 		}
-		return (Week) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("week");
+		return (Week) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("week");}
 	}
 	
 	private void setCurrentWeek(Week week){
 		VaadinService.getCurrentRequest().getWrappedSession().setAttribute("week", week);
+		weekMember = week;
+		
 	}
 }
