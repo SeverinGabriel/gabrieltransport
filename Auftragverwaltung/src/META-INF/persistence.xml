@@ -43,6 +43,12 @@
 		<class>
 			ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktionmap
 		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Anhaenger
+		</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="none" />
@@ -65,7 +71,7 @@
 			<property name="javax.persistence.jdbc.url"
 				value="jdbc:mysql://localhost:3306/gabrieltransport" />
 			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.cache.region.factory_class"
 				value="org.hibernate.cache.jcache.JCacheRegionFactory" />
 			<property name="javax.persistence.jdbc.driver"

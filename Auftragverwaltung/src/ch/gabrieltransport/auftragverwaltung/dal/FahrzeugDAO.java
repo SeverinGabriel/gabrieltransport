@@ -12,6 +12,5 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 public class FahrzeugDAO extends JPADAO<Fahrzeug, Integer> {
 	public FahrzeugDAO() {
 		super(Fahrzeug.class);
-		
 	}
 }

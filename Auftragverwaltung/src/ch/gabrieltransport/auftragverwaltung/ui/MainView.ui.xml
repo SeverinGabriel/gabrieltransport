@@ -4,6 +4,7 @@
 <?xdevuiml version="1.0"?>
 <?template NONE?>
 <?import?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug?>
@@ -12,10 +13,12 @@
 <?import com.xdev.ui.XdevHorizontalLayout?>
 <?import com.xdev.ui.XdevHorizontalSplitPanel?>
 <?import com.xdev.ui.XdevLabel?>
+<?import com.xdev.ui.XdevPanel?>
 <?import com.xdev.ui.XdevView?>
 <?import com.xdev.ui.entitycomponent.combobox.XdevComboBox?>
 <?import com.xdev.ui.entitycomponent.table.XdevTable?>
 <?import com.xdev.ui.filter.XdevContainerFilterComponent?>
+<?import java.lang.Integer?>
 <?import java.lang.String?>
 <XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="MainView">
     <x:constraints zpos="0" width="100%" height="100%" />
@@ -27,9 +30,10 @@
                 <x:constraints weightx="0.0" />
                 <x:event>click.buttonClick</x:event>
             </XdevButton>
-            <XdevLabel x:name="lblWeek">
+            <XdevButton caption="" styleName="borderless" x:name="btnWeek">
                 <x:constraints weightx="0.0" />
-            </XdevLabel>
+                <x:event>click.buttonClick</x:event>
+            </XdevButton>
             <XdevButton icon="FontAwesome.CARET_RIGHT" caption="" x:name="button2">
                 <x:constraints weightx="0.0" />
                 <x:event>click.buttonClick</x:event>
@@ -47,68 +51,107 @@
                 <x:constraints weightx="0.0" />
             </XdevLabel>
         </XdevHorizontalLayout>
-        <XdevButton icon="FontAwesome.CARET_DOWN" caption="Personal" x:name="btnExpandPersonal" visible="false">
-            <x:constraints gridx="1" gridy="3" weighty="0.0" weightx="1.0" />
-            <x:event>click.buttonClick</x:event>
-        </XdevButton>
-        <XdevHorizontalLayout x:name="horizontalLayout3" margin="">
-            <x:constraints gridx="1" gridy="4" weighty="0.0" weightx="1.0" width="100%" height="41px" />
-            <XdevButton caption="Button" x:name="button3">
+        <XdevHorizontalLayout spacing="false" x:name="horizontalLayout6" margin="">
+            <x:constraints gridx="1" gridy="3" weighty="0.0" weightx="1.0" width="100%" height="50px" />
+            <XdevButton caption="Personal" styleName="borderless" enabled="false" x:name="btnEmployee">
                 <x:constraints weightx="0.0" />
                 <x:event>click.buttonClick</x:event>
             </XdevButton>
-            <XdevLabel x:name="label" value="Label">
+            <XdevButton caption="Anhänger" styleName="borderless" x:name="btnTrailer">
                 <x:constraints weightx="0.0" />
-            </XdevLabel>
-            <XdevComboBox x:name="comboBox" x:entity="Fahrerfunktion">
-                <x:constraints weightx="0.3" width="100%" />
-                <x:typeArguments>
-                    <typeArgument type="Fahrerfunktion" />
-                </x:typeArguments>
-                <x:event>valueChange.valueChange</x:event>
-            </XdevComboBox>
-            <XdevContainerFilterComponent x:name="containerFilterComponent2">
-                <x:constraints weightx="0.9" width="100%" alignment="MIDDLE_RIGHT" />
-            </XdevContainerFilterComponent>
+                <x:event>click.buttonClick</x:event>
+            </XdevButton>
         </XdevHorizontalLayout>
-        <XdevTable caption="Personal" x:name="tblEmployee" x:entity="Fahrer" x:autoQuery="false" responsive="true">
-            <x:entityProperties>
-                <entry type="String" property="vorname" width="100" />
-                <entry type="String" property="nachname" width="100" />
-                <entry type="" property="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-            </x:entityProperties>
-            <x:constraints gridx="1" gridy="5" weighty="0.3" weightx="1.0" width="100%" height="100%" />
-            <x:typeArguments>
-                <typeArgument type="Fahrer" />
-            </x:typeArguments>
-            <x:data methodName="findAll" />
-            <x:event>headerClick.headerClick</x:event>
-            <x:event>columnResize.columnResize</x:event>
-        </XdevTable>
-        <XdevContainerFilterComponent x:searchableProperties="kennzeichen,gewicht,fahrzeugFunktion.beschreibung" x:name="containerFilterComponent" x:filterableProperties="idfahrzeug,kennzeichen,gewicht,fahrzeugFunktion" x:container="tblTask">
-            <x:constraints gridx="1" gridy="6" weighty="0.0" weightx="1.0" width="100%" />
+        <XdevHorizontalLayout x:name="horizontalLayout5" margin="">
+            <x:constraints gridx="1" gridy="4" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <XdevPanel tabIndex="0" x:name="pnEmployee" x:persist="true">
+                <x:constraints gridHeight="1" gridx="1" gridy="4" weighty="0.0" weightx="0.1" width="100%" alignment="TOP_LEFT" gridWidth="1" height="100%" />
+                <XdevGridLayout x:name="gridLayout4" margin="">
+                    <x:constraints zpos="0" width="100%" height="100%" />
+                    <XdevHorizontalLayout x:name="horizontalLayout4" margin="">
+                        <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" />
+                        <XdevComboBox x:name="comboBox" x:entity="Fahrerfunktion">
+                            <x:constraints gridHeight="1" gridx="1" gridy="2" weighty="0.0" weightx="0.0" gridWidth="1" />
+                            <x:typeArguments>
+                                <typeArgument type="Fahrerfunktion" />
+                            </x:typeArguments>
+                            <x:event>valueChange.valueChange</x:event>
+                        </XdevComboBox>
+                        <XdevContainerFilterComponent x:name="containerFilterComponent2">
+                            <x:constraints gridHeight="1" gridx="2" gridy="1" weighty="0.0" weightx="1.0" width="100%" alignment="MIDDLE_RIGHT" gridWidth="1" />
+                        </XdevContainerFilterComponent>
+                    </XdevHorizontalLayout>
+                    <XdevTable x:name="tblEmployee" x:entity="Fahrer" x:autoQuery="false" responsive="true">
+                        <x:entityProperties>
+                            <entry type="String" property="vorname" caption="Vorname" width="110" />
+                            <entry type="String" property="nachname" caption="Nachname" width="110" />
+                            <entry type="" property="Funktion" generator="ch.gabrieltransport.auftragverwaltung.ui.DriverFunctionColumn" width="95" />
+                            <entry type="" property="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
+                            <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
+                        </x:entityProperties>
+                        <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+                        <x:typeArguments>
+                            <typeArgument type="Fahrer" />
+                        </x:typeArguments>
+                        <x:event>columnResize.columnResize</x:event>
+                    </XdevTable>
+                </XdevGridLayout>
+            </XdevPanel>
+            <XdevPanel x:name="pnTrailer" visible="false" x:persist="true">
+                <x:constraints weightx="0.1" width="100%" height="100%" />
+                <XdevGridLayout x:name="gridLayout5" margin="">
+                    <x:constraints zpos="0" width="100%" height="100%" />
+                    <XdevHorizontalLayout x:name="horizontalLayout3" margin="">
+                        <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" />
+                        <XdevContainerFilterComponent x:name="containerFilterComponent3">
+                            <x:constraints weightx="1.0" width="100%" />
+                        </XdevContainerFilterComponent>
+                    </XdevHorizontalLayout>
+                    <XdevTable x:name="tblTrailer" x:entity="Anhaenger">
+                        <x:entityProperties>
+                            <entry type="int" property="nummer" caption="#" width="50" />
+                            <entry type="String" property="kennzeichen" caption="Kennzeichen" width="100" />
+                            <entry type="Integer" property="nutzlast" caption="Nutzlast" width="75" />
+                            <entry type="String" property="fahrzeugFunktion.beschreibung" caption="Funktion" width="90" />
+                            <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                            <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
+                            <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
+                        </x:entityProperties>
+                        <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+                        <x:typeArguments>
+                            <typeArgument type="Anhaenger" />
+                        </x:typeArguments>
+                    </XdevTable>
+                </XdevGridLayout>
+            </XdevPanel>
+        </XdevHorizontalLayout>
+        <XdevContainerFilterComponent x:searchableProperties="kennzeichen,fahrzeugFunktion.beschreibung" x:name="containerFilterComponent" x:filterableProperties="kennzeichen,gewicht,fahrzeugFunktion,nutzlast,nummer" x:container="tblTask">
+            <x:constraints gridx="1" gridy="5" weighty="0.0" weightx="1.0" width="100%" />
         </XdevContainerFilterComponent>
         <XdevTable caption="Aufträge" x:name="tblTask" columnCollapsingAllowed="true" x:entity="Fahrzeug" responsive="true">
             <x:entityProperties>
-                <entry type="int" property="idfahrzeug" caption="#" width="25" />
+                <entry type="int" property="nummer" caption="#" width="50" />
                 <entry type="String" property="kennzeichen" caption="Kennzeichen" width="100" />
-                <entry type="String" property="gewicht" width="75" />
-                <entry type="String" property="fahrzeugFunktion.beschreibung" />
+                <entry type="int" property="nutzlast" caption="Nutzlast" width="75" />
+                <entry type="String" property="fahrzeugFunktion.beschreibung" caption="Funktion" width="90" />
                 <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
                 <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
                 <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
                 <entry type="" property="Donnerstag" caption="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
                 <entry type="" property="Freitag" caption="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Samstag" caption="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                <entry type="" property="Sonntag" caption="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                <entry type="" property="Samstag" caption="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.05" />
+                <entry type="" property="Sonntag" caption="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.05" />
             </x:entityProperties>
-            <x:constraints gridx="1" gridy="7" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <x:constraints gridx="1" gridy="6" weighty="1.0" weightx="1.0" width="100%" height="100%" />
             <x:typeArguments>
                 <typeArgument type="Fahrzeug" />
             </x:typeArguments>

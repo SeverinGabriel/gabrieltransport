@@ -34,6 +34,7 @@ public class Fahrzeugauftrag implements java.io.Serializable {
 	private Fahrzeug fahrzeug;
 	private LocalDateTime vonDatum;
 	private LocalDateTime bisDatum;
+	private Anhaenger anhaenger;
 
 	public Fahrzeugauftrag() {
 	}
@@ -44,6 +45,15 @@ public class Fahrzeugauftrag implements java.io.Serializable {
 		this.fahrzeug = fahrzeug;
 		this.vonDatum = vonDatum;
 		this.bisDatum = bisDatum;
+	}
+	
+	public Fahrzeugauftrag(Anhaenger anhaenger, int idfahrzeugauftrag, Auftrag auftrag, Fahrzeug fahrzeug, LocalDateTime vonDatum, LocalDateTime bisDatum) {
+		this.idfahrzeugauftrag = idfahrzeugauftrag;
+		this.auftrag = auftrag;
+		this.fahrzeug = fahrzeug;
+		this.vonDatum = vonDatum;
+		this.bisDatum = bisDatum;
+		this.anhaenger = anhaenger;
 	}
 
 	@Caption("Idfahrzeugauftrag")
@@ -99,6 +109,17 @@ public class Fahrzeugauftrag implements java.io.Serializable {
 
 	public void setBisDatum(LocalDateTime bisDatum) {
 		this.bisDatum = bisDatum;
+	}
+	
+	@Caption("Anhaenger")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "fkAnhänger", columnDefinition = "INT")
+	public Anhaenger getAnhaenger() {
+		return this.anhaenger;
+	}
+
+	public void setAnhaenger(Anhaenger anhaenger) {
+		this.anhaenger = anhaenger;
 	}
 
 }

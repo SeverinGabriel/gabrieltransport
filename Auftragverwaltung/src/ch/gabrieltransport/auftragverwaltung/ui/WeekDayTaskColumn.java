@@ -139,6 +139,15 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 		for(Fahrzeugauftrag auftrag: auftraege){
 			XdevButton auftragField = new XdevButton();
 			auftragField.setCaption(auftrag.getAuftrag().getBezeichung());
+			auftragField.setHtmlContentAllowed(true);
+			StringBuilder sb = new StringBuilder();
+			sb.append("<table>");
+			auftrag.getAuftrag().getFahrerauftrags().
+				forEach(s -> sb.append("<tr><td>" + s.getFahrer().getVorname() + 
+						"</td><td>"+ s.getFahrer().getNachname()+ "</td></tr>"));
+			sb.append("</table>");
+			
+			auftragField.setDescription(sb.toString());
 			auftragField.addStyleName("borderless");
 			auftragField.setSizeFull();
 			auftragField.addClickListener(new ClickListener() {

@@ -8,7 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugFunktionDAO;
+import ch.gabrieltransport.auftragverwaltung.dal.AnhaengertypDAO;
 import com.xdev.dal.DAO;
 import com.xdev.util.Caption;
 import javax.persistence.Id;
@@ -16,43 +16,43 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * FahrzeugFunktion
+ * Anhaengertyp
  */
-@DAO(daoClass = FahrzeugFunktionDAO.class)
+@DAO(daoClass = AnhaengertypDAO.class)
 @Caption("{%beschreibung}")
 @Entity
-@Table(name = "fahrzeug_funktion", catalog = "gabrieltransport")
-public class FahrzeugFunktion implements java.io.Serializable {
+@Table(name = "anhaengertyp", catalog = "gabrieltransport")
+public class Anhaengertyp implements java.io.Serializable {
 
-	private int idfunktion;
+	private int idanhaengertyp;
 	private String beschreibung;
-	private Set<Anhaenger> anhaengers = new HashSet<Anhaenger>(0);
 	private Set<Fahrzeug> fahrzeugs = new HashSet<Fahrzeug>(0);
+	private Set<Anhaenger> anhaengers = new HashSet<Anhaenger>(0);
 
-	public FahrzeugFunktion() {
+	public Anhaengertyp() {
 	}
 
-	public FahrzeugFunktion(String beschreibung) {
+	public Anhaengertyp(String beschreibung) {
 		this.beschreibung = beschreibung;
 	}
 
-	public FahrzeugFunktion(String beschreibung, Set<Anhaenger> anhaengers, Set<Fahrzeug> fahrzeugs) {
+	public Anhaengertyp(String beschreibung, Set<Fahrzeug> fahrzeugs, Set<Anhaenger> anhaengers) {
 		this.beschreibung = beschreibung;
-		this.anhaengers = anhaengers;
 		this.fahrzeugs = fahrzeugs;
+		this.anhaengers = anhaengers;
 	}
 
-	@Caption("Idfunktion")
+	@Caption("Idanhaengertyp")
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 
-	@Column(name = "idfunktion", unique = true, nullable = false, columnDefinition = "INT")
-	public int getIdfunktion() {
-		return this.idfunktion;
+	@Column(name = "idanhaengertyp", unique = true, nullable = false, columnDefinition = "INT")
+	public int getIdanhaengertyp() {
+		return this.idanhaengertyp;
 	}
 
-	public void setIdfunktion(int idfunktion) {
-		this.idfunktion = idfunktion;
+	public void setIdanhaengertyp(int idanhaengertyp) {
+		this.idanhaengertyp = idanhaengertyp;
 	}
 
 	@Caption("Beschreibung")
@@ -65,24 +65,24 @@ public class FahrzeugFunktion implements java.io.Serializable {
 		this.beschreibung = beschreibung;
 	}
 
-	@Caption("Anhaengers")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "fahrzeugFunktion")
-	public Set<Anhaenger> getAnhaengers() {
-		return this.anhaengers;
-	}
-
-	public void setAnhaengers(Set<Anhaenger> anhaengers) {
-		this.anhaengers = anhaengers;
-	}
-
 	@Caption("Fahrzeugs")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "fahrzeugFunktion")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "anhaengertyp")
 	public Set<Fahrzeug> getFahrzeugs() {
 		return this.fahrzeugs;
 	}
 
 	public void setFahrzeugs(Set<Fahrzeug> fahrzeugs) {
 		this.fahrzeugs = fahrzeugs;
+	}
+
+	@Caption("Anhaengers")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "anhaengertyp")
+	public Set<Anhaenger> getAnhaengers() {
+		return this.anhaengers;
+	}
+
+	public void setAnhaengers(Set<Anhaenger> anhaengers) {
+		this.anhaengers = anhaengers;
 	}
 
 }

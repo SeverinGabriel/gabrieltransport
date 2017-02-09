@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,10 +15,13 @@ import java.util.Set;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 import com.xdev.dal.DAOs;
 import com.xdev.ui.XdevAbsoluteLayout;
@@ -34,7 +38,10 @@ import com.xdev.ui.entitycomponent.listselect.XdevOptionGroup;
 import com.xdev.ui.entitycomponent.listselect.XdevTwinColSelect;
 import com.xdev.ui.filter.XdevContainerFilterComponent;
 import ch.gabrieltransport.auftragverwaltung.business.facade.AuftragServiceFacade;
+import ch.gabrieltransport.auftragverwaltung.dal.AnhaengerDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger_;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
@@ -55,28 +62,27 @@ public class taskDetail extends XdevView {
 	private static final String time_morning = "Vormittag"; 
 	private static final String time_afternoon = "Nachmittag";
 	private static final String time_specific = "Spezifische Zeit"; 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 	private Auftrag currentTask = new Auftrag();
 	private Fahrzeugauftrag fahrzeugAuftrag = new Fahrzeugauftrag();
 	private Callback callback;
 	private AuftragServiceFacade auftragServiceFacade = new AuftragServiceFacade();
-	public taskDetail() {
+	public taskDetail(Fahrzeug fz) {
 		super();
 		this.initUI();
+		initTrailer(fz);
 		optionGroup.addItems(time_day, time_morning, time_afternoon, time_specific);
-		
 	}
 	public taskDetail(Fahrzeugauftrag auftrag, Callback callback) {
-		this();
+		this(auftrag.getFahrzeug());
 		this.callback = callback;
 		currentTask = auftrag.getAuftrag();
 		txtDescription.setValue(currentTask.getBezeichung());
 		this.fahrzeugAuftrag = auftrag;
+		setTime(fahrzeugAuftrag.getVonDatum(), fahrzeugAuftrag.getBisDatum());
 		fromDate.setValue(Date.from(fahrzeugAuftrag.getVonDatum().atZone(ZoneId.systemDefault()).toInstant()));
 		untilDate.setValue(Date.from(fahrzeugAuftrag.getBisDatum().atZone(ZoneId.systemDefault()).toInstant()));
 		cmbVehicle.select(fahrzeugAuftrag.getFahrzeug().getIdfahrzeug());
-		setTime(fahrzeugAuftrag.getVonDatum(), fahrzeugAuftrag.getBisDatum());
-		
 		
 		for(Fahrerauftrag fa: currentTask.getFahrerauftrags()){
 			for (Iterator i = tsDriver.getItemIds().iterator(); i.hasNext();) {
@@ -84,20 +90,41 @@ public class taskDetail extends XdevView {
 				if (iid.getIdfahrer() == fa.getFahrer().getIdfahrer()){
 					tsDriver.select(iid);
 				}
-
-			    
 			}
+		}
+		if(auftrag.getAnhaenger() != null){
+			List<Anhaenger> test = (List<Anhaenger>)cmbTrailer.getItemIds();
+			for (Anhaenger test2: test) {
+				if (test2.getNummer() == auftrag.getAnhaenger().getNummer()){
+					cmbTrailer.select(test2);
+				}
+			}
+			//cmbTrailer.select(auftrag.getAnhaenger());
 		}
 		
 	}
 	public taskDetail(LocalDateTime ldt, Fahrzeug fz, Callback callback) {
-		
-		this();
+		this(fz);
 		this.callback = callback;
 		Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+		optionGroup.select(time_day);
 		fromDate.setValue(date);
 		untilDate.setValue(date);
 		cmbVehicle.select(fz.getIdfahrzeug());
+	}
+	
+	public void initTrailer(Fahrzeug fz){
+		cmbTrailer.removeAllItems();
+		if(fz.getAnhaenger()){
+			hlTrailer.setVisible(true);
+			if(fz.getAnhaengertyp() != null){
+				cmbTrailer.getBeanContainerDataSource().addAll(new AnhaengerDAO().getAllbyTyp(fz.getAnhaengertyp()));
+			}else{
+				cmbTrailer.getBeanContainerDataSource().addAll(new AnhaengerDAO().findAll());
+			}
+		}else{
+			hlTrailer.setVisible(false);
+		}
 	}
 
 	/**
@@ -135,8 +162,9 @@ public class taskDetail extends XdevView {
 	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
 	 */
 	private void cmbVehicle_valueChange(Property.ValueChangeEvent event) {
-		lblWeight.setValue( cmbVehicle.getSelectedItem().getBean().getGewicht());
+		lblWeight.setValue( String.valueOf(cmbVehicle.getSelectedItem().getBean().getNutzlast()));
 		lblSign.setValue(cmbVehicle.getSelectedItem().getBean().getKennzeichen());
+		initTrailer(cmbVehicle.getSelectedItem().getBean());
 	}
 	/**
 	 * Event handler delegate method for the {@link XdevButton}
@@ -163,27 +191,44 @@ public class taskDetail extends XdevView {
 		
 		LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDateTime ldt = LocalDateTime.of(ldUntil, getTime(false));
-		currentTask.setBisDatum(ldt);
-		ldt = LocalDateTime.of(ldFrom, getTime(true));
-		currentTask.setVonDatum(ldt);
-		
-		List<Fahrerauftrag> driverList = new ArrayList<Fahrerauftrag>();
-		for(BeanItem<Fahrer> bean : tsDriver.getSelectedItems()){
-	    	Fahrerauftrag faA = new Fahrerauftrag();
-	    	faA.setAuftrag(currentTask);
-	    	faA.setBisDatum(currentTask.getBisDatum());
-	    	faA.setVonDatum(currentTask.getVonDatum());
-	    	faA.setFahrer(bean.getBean());
-			driverList.add(faA);
-		}
-		if(currentTask.getIdAuftrag() == 0){
-			auftragServiceFacade.persistAuftrag(currentTask, cmbVehicle.getSelectedItem().getBean(), driverList);
+		if(ldFrom.isBefore(ldUntil) || ldFrom.isEqual(ldUntil)){
+			LocalDateTime ldt = LocalDateTime.of(ldUntil, getTime(false));
+			currentTask.setBisDatum(ldt);
+			ldt = LocalDateTime.of(ldFrom, getTime(true));
+			currentTask.setVonDatum(ldt);
+			
+			List<Fahrerauftrag> driverList = new ArrayList<Fahrerauftrag>();
+			for(BeanItem<Fahrer> bean : tsDriver.getSelectedItems()){
+		    	Fahrerauftrag faA = new Fahrerauftrag();
+		    	faA.setAuftrag(currentTask);
+		    	faA.setBisDatum(currentTask.getBisDatum());
+		    	faA.setVonDatum(currentTask.getVonDatum());
+		    	faA.setFahrer(bean.getBean());
+				driverList.add(faA);
+			}
+			List<Fahrzeugauftrag> fahrzeugauftraege = 
+					Arrays.asList(auftragServiceFacade.createTaskFromVehicle(currentTask, cmbVehicle.getSelectedItem().getBean()));
+			for (Fahrzeugauftrag fa: fahrzeugauftraege) {
+				if(cmbTrailer.getValue() != null){
+					fa.setAnhaenger((Anhaenger)cmbTrailer.getValue());
+				}else{
+					fa.setAnhaenger(null);
+				}
+			}
+			
+			if(currentTask.getIdAuftrag() == 0){
+				auftragServiceFacade.persistAuftrag(currentTask, fahrzeugauftraege, driverList);
+			}else{
+				auftragServiceFacade.mergeAuftrag(currentTask, fahrzeugauftraege, driverList);
+			}
+			callback.onDialogResult(true);
+			((Window)this.getParent()).close();
 		}else{
-			auftragServiceFacade.mergeAuftrag(currentTask, cmbVehicle.getSelectedItem().getBean(), driverList);
+			new Notification("Eingabefehler",
+				    "<br/>Enddatum vor Startdatum",
+				    Notification.TYPE_ERROR_MESSAGE, true)
+				    .show(Page.getCurrent());
 		}
-		callback.onDialogResult(true);
-		((Window)this.getParent()).close();
 		
 	}
 	
@@ -208,16 +253,22 @@ public class taskDetail extends XdevView {
 		}
 	}
 	private void setTime(LocalDateTime start, LocalDateTime end){
+		boolean setSpecific = false;
 		if(start.getHour() == 0 && end.getHour() == 0){
 			optionGroup.setValue(time_day);
+			setSpecific = true;
 		}
-		else if(start.getHour() == 8  && end.getHour() == 12){
-			optionGroup.setValue(time_morning);
+		else if(start.getDayOfYear() == end.getDayOfYear()){
+			if(start.getHour() == 8  && end.getHour() == 12){
+				optionGroup.setValue(time_morning);
+				setSpecific = true;
+			}
+			else if(start.getHour() == 13  && end.getHour() == 18){
+				optionGroup.setValue(time_afternoon);
+				setSpecific = true;
+			}
 		}
-		else if(start.getHour() == 13  && end.getHour() == 18){
-			optionGroup.setValue(time_afternoon);
-		}
-		else {
+		if(!setSpecific){
 			optionGroup.setValue(time_specific);
 			txtTimeUntil.setValue(end.format(formatter));
 			lblTimeFrom.setValue(start.format(formatter));
@@ -235,6 +286,74 @@ public class taskDetail extends XdevView {
 	
 	}
 	
+	/**
+	 * Event handler delegate method for the {@link XdevPopupDateField}
+	 * {@link #fromDate}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void fromDate_valueChange(Property.ValueChangeEvent event) {
+		checkDates();
+	}
+	
+	/**
+	 * Event handler delegate method for the {@link XdevPopupDateField}
+	 * {@link #untilDate}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void untilDate_valueChange(Property.ValueChangeEvent event) {
+		checkDates();
+	}
+	
+	private void checkDates(){
+		if(untilDate.getValue() != null && fromDate.getValue() != null){
+			LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			if(ldFrom.getDayOfYear() == ldUntil.getDayOfYear()){
+				setupOptionGroup(true);
+			}else{
+				setupOptionGroup(false);
+			}
+		}
+	}
+	
+	private void setupOptionGroup(boolean full){
+		String selected = "";
+		if (optionGroup.getValue() != null){
+			selected = optionGroup.getValue().toString();
+		}
+		optionGroup.removeAllItems();
+		if(full){
+			optionGroup.addItems(time_day, time_morning, time_afternoon, time_specific);
+		}else{
+			optionGroup.addItems(time_day, time_specific);
+		}
+		if(selected != ""){
+			optionGroup.setValue(selected);;
+		}
+	}
+	
+	
+	/**
+	 * Event handler delegate method for the {@link XdevComboBox} {@link #cmbTrailer}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void cmbTrailer_valueChange(Property.ValueChangeEvent event) {
+		if(cmbTrailer.getValue() != null){
+			lblTrailerSign.setValue(cmbTrailer.getSelectedItem().getBean().getKennzeichen());
+			lblTrailerWeight.setValue(String.valueOf(cmbTrailer.getSelectedItem().getBean().getNutzlast()));
+			lblTrailerTyp.setValue(cmbTrailer.getSelectedItem().getBean().getAnhaengertyp().getBeschreibung());
+		}else{
+			lblTrailerSign.setValue("");
+			lblTrailerWeight.setValue("");
+			lblTrailerTyp.setValue("");
+		}
+	}
 	/*
 	 * WARNING: Do NOT edit!<br>The content of this method is always regenerated by
 	 * the UI designer.
@@ -267,6 +386,11 @@ public class taskDetail extends XdevView {
 		this.cmbVehicle = new XdevComboBox<>();
 		this.lblSign = new XdevLabel();
 		this.lblWeight = new XdevLabel();
+		this.hlTrailer = new XdevHorizontalLayout();
+		this.cmbTrailer = new XdevComboBox<>();
+		this.lblTrailerSign = new XdevLabel();
+		this.lblTrailerWeight = new XdevLabel();
+		this.lblTrailerTyp = new XdevLabel();
 		this.lblDriver = new XdevLabel();
 		this.horizontalLayout6 = new XdevHorizontalLayout();
 		this.containerFilterComponent = new XdevContainerFilterComponent();
@@ -293,10 +417,20 @@ public class taskDetail extends XdevView {
 		this.lblVehicle.setValue("Fahrzeug");
 		this.horizontalLayout2.setMargin(new MarginInfo(false, true, true, true));
 		this.cmbVehicle.setItemCaptionFromAnnotation(false);
+		this.cmbVehicle.setNullSelectionAllowed(false);
 		this.cmbVehicle.setContainerDataSource(Fahrzeug.class);
-		this.cmbVehicle.setItemCaptionPropertyId(Fahrzeug_.idfahrzeug.getName());
+		this.cmbVehicle.setItemCaptionPropertyId(Fahrzeug_.nummer.getName());
 		this.lblSign.setValue("Kennzeichen");
 		this.lblWeight.setValue("Gewicht");
+		this.hlTrailer.setMargin(new MarginInfo(false, true, true, true));
+		this.hlTrailer.setVisible(false);
+		this.cmbTrailer.setInvalidAllowed(false);
+		this.cmbTrailer.setItemCaptionFromAnnotation(false);
+		this.cmbTrailer.setContainerDataSource(Anhaenger.class, false);
+		this.cmbTrailer.setItemCaptionPropertyId(Anhaenger_.nummer.getName());
+		this.lblTrailerSign.setValue("Label");
+		this.lblTrailerWeight.setValue("Label");
+		this.lblTrailerTyp.setValue("Label");
 		this.lblDriver.setValue("Fahrer");
 		this.button.setCaption("Detailplanung");
 		this.horizontalLayout5.setMargin(new MarginInfo(false));
@@ -379,15 +513,31 @@ public class taskDetail extends XdevView {
 		this.cmbVehicle.setHeight(-1, Unit.PIXELS);
 		this.horizontalLayout2.addComponent(this.cmbVehicle);
 		this.horizontalLayout2.setComponentAlignment(this.cmbVehicle, Alignment.MIDDLE_LEFT);
-		this.horizontalLayout2.setExpandRatio(this.cmbVehicle, 10.0F);
+		this.horizontalLayout2.setExpandRatio(this.cmbVehicle, 30.0F);
 		this.lblSign.setSizeUndefined();
 		this.horizontalLayout2.addComponent(this.lblSign);
 		this.horizontalLayout2.setComponentAlignment(this.lblSign, Alignment.MIDDLE_CENTER);
-		this.horizontalLayout2.setExpandRatio(this.lblSign, 10.0F);
+		this.horizontalLayout2.setExpandRatio(this.lblSign, 30.0F);
 		this.lblWeight.setSizeUndefined();
 		this.horizontalLayout2.addComponent(this.lblWeight);
 		this.horizontalLayout2.setComponentAlignment(this.lblWeight, Alignment.MIDDLE_CENTER);
-		this.horizontalLayout2.setExpandRatio(this.lblWeight, 10.0F);
+		this.horizontalLayout2.setExpandRatio(this.lblWeight, 30.0F);
+		this.cmbTrailer.setSizeUndefined();
+		this.hlTrailer.addComponent(this.cmbTrailer);
+		this.hlTrailer.setComponentAlignment(this.cmbTrailer, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setExpandRatio(this.cmbTrailer, 30.0F);
+		this.lblTrailerSign.setSizeUndefined();
+		this.hlTrailer.addComponent(this.lblTrailerSign);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerSign, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setExpandRatio(this.lblTrailerSign, 20.0F);
+		this.lblTrailerWeight.setSizeUndefined();
+		this.hlTrailer.addComponent(this.lblTrailerWeight);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerWeight, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setExpandRatio(this.lblTrailerWeight, 20.0F);
+		this.lblTrailerTyp.setSizeUndefined();
+		this.hlTrailer.addComponent(this.lblTrailerTyp);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerTyp, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setExpandRatio(this.lblTrailerTyp, 20.0F);
 		this.containerFilterComponent.setWidth(100, Unit.PERCENTAGE);
 		this.containerFilterComponent.setHeight(-1, Unit.PIXELS);
 		this.horizontalLayout6.addComponent(this.containerFilterComponent);
@@ -412,11 +562,10 @@ public class taskDetail extends XdevView {
 		this.verticalLayout.addComponent(this.horizontalLayout);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout, Alignment.MIDDLE_CENTER);
 		this.verticalLayout.setExpandRatio(this.horizontalLayout, 10.0F);
-		this.horizontalLayout3.setWidth(100, Unit.PERCENTAGE);
-		this.horizontalLayout3.setHeight(244, Unit.PIXELS);
+		this.horizontalLayout3.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout3);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout3, Alignment.MIDDLE_CENTER);
-		this.verticalLayout.setExpandRatio(this.horizontalLayout3, 10.0F);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout3, 20.0F);
 		this.lblVehicle.setSizeUndefined();
 		this.verticalLayout.addComponent(this.lblVehicle);
 		this.verticalLayout.setComponentAlignment(this.lblVehicle, Alignment.BOTTOM_LEFT);
@@ -425,6 +574,11 @@ public class taskDetail extends XdevView {
 		this.horizontalLayout2.setHeight(-1, Unit.PIXELS);
 		this.verticalLayout.addComponent(this.horizontalLayout2);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout2, Alignment.MIDDLE_CENTER);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout2, 10.0F);
+		this.hlTrailer.setSizeFull();
+		this.verticalLayout.addComponent(this.hlTrailer);
+		this.verticalLayout.setComponentAlignment(this.hlTrailer, Alignment.MIDDLE_CENTER);
+		this.verticalLayout.setExpandRatio(this.hlTrailer, 10.0F);
 		this.lblDriver.setSizeUndefined();
 		this.verticalLayout.addComponent(this.lblDriver);
 		this.verticalLayout.setComponentAlignment(this.lblDriver, Alignment.BOTTOM_LEFT);
@@ -437,18 +591,30 @@ public class taskDetail extends XdevView {
 		this.horizontalLayout5.setHeight(181, Unit.PIXELS);
 		this.verticalLayout.addComponent(this.horizontalLayout5);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout5, Alignment.MIDDLE_CENTER);
-		this.verticalLayout.setWidth(543, Unit.PIXELS);
-		this.verticalLayout.setHeight(886, Unit.PIXELS);
+		this.verticalLayout.setWidth(100, Unit.PERCENTAGE);
+		this.verticalLayout.setHeight(93, Unit.PERCENTAGE);
 		this.absoluteLayout.addComponent(this.verticalLayout, "left:29px; top:0px");
-		this.absoluteLayout.addComponent(this.btnSave, "left:371px; top:920px");
-		this.absoluteLayout.addComponent(this.btnCancel, "left:443px; top:920px");
-		this.absoluteLayout.setWidth(600, Unit.PIXELS);
-		this.absoluteLayout.setHeight(1000, Unit.PIXELS);
+		this.absoluteLayout.addComponent(this.btnSave, "left:561px; top:985px");
+		this.absoluteLayout.addComponent(this.btnCancel, "left:640px; top:985px");
+		this.absoluteLayout.setWidth(800, Unit.PIXELS);
+		this.absoluteLayout.setHeight(1050, Unit.PIXELS);
 		this.setContent(this.absoluteLayout);
 		this.setWidth(800, Unit.PIXELS);
 		this.setHeight(1050, Unit.PIXELS);
 	
 		this.button3.addClickListener(event -> this.button3_buttonClick(event));
+		this.fromDate.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				taskDetail.this.fromDate_valueChange(event);
+			}
+		});
+		this.untilDate.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				taskDetail.this.untilDate_valueChange(event);
+			}
+		});
 		this.optionGroup.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
@@ -461,6 +627,12 @@ public class taskDetail extends XdevView {
 				taskDetail.this.cmbVehicle_valueChange(event);
 			}
 		});
+		this.cmbTrailer.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				taskDetail.this.cmbTrailer_valueChange(event);
+			}
+		});
 		this.button.addClickListener(event -> this.button_buttonClick(event));
 		this.btnSave.addClickListener(event -> this.btnSave_buttonClick(event));
 		this.btnCancel.addClickListener(event -> this.btnCancel_buttonClick(event));
@@ -468,19 +640,20 @@ public class taskDetail extends XdevView {
 
 	// <generated-code name="variables">
 	private XdevLabel lblMission, lblDescription, label3, label4, label10, label8, label9, lblVehicle, lblSign, lblWeight,
-			lblDriver;
+			lblTrailerSign, lblTrailerWeight, lblTrailerTyp, lblDriver;
 	private XdevButton button3, button, btnSave, btnCancel;
+	private XdevGridLayout gridLayout, gridLayout2;
+	private XdevOptionGroup<String> optionGroup;
+	private XdevComboBox<Fahrzeug> cmbVehicle;
+	private XdevContainerFilterComponent containerFilterComponent;
+	private XdevComboBox<Anhaenger> cmbTrailer;
 	private XdevTwinColSelect<Fahrer> tsDriver;
-	private XdevHorizontalLayout horizontalLayout4, horizontalLayout, horizontalLayout3, horizontalLayout2,
+	private XdevHorizontalLayout horizontalLayout4, horizontalLayout, horizontalLayout3, horizontalLayout2, hlTrailer,
 			horizontalLayout6, horizontalLayout5;
 	private XdevAbsoluteLayout absoluteLayout;
 	private XdevPopupDateField fromDate, untilDate;
 	private XdevTextField txtDescription, lblTimeFrom, txtTimeUntil;
-	private XdevGridLayout gridLayout, gridLayout2;
 	private XdevVerticalLayout verticalLayout;
-	private XdevOptionGroup<String> optionGroup;
-	private XdevComboBox<Fahrzeug> cmbVehicle;
-	private XdevContainerFilterComponent containerFilterComponent;
 	// </generated-code>
 
 

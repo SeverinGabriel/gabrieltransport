@@ -83,6 +83,7 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 	}
 	
 	public void update() {
+		LocalDateTime currentDate = getDateForDay();
 		double workHourCounter = 0;
 		double workMinuteCounter = 0;
 		final FahrerauftragDAO auftragServiceFacade = new FahrerauftragDAO();
@@ -91,7 +92,14 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 			LocalDateTime fromDate = auftrag.getVonDatum();
 			LocalDateTime untilDate = auftrag.getBisDatum();
 			
-			if(fromDate.getHour() == 0){
+			if (fromDate.isBefore(currentDate)){
+				fromDate = currentDate.plusHours(8);
+			}
+			if (untilDate.isAfter(currentDate.plusHours(24))){
+				untilDate = currentDate.plusHours(18);
+			}
+			
+			if(fromDate.getHour() == 0 || untilDate.getHour() == 0){
 				workHourCounter += 8;
 			}else{
 				long hours = fromDate.until( untilDate, ChronoUnit.HOURS);
@@ -111,9 +119,9 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 		
 		if(workHourCounter == 0){
 			panel.setStyleName("green");
-		}else if(workHourCounter <=3){
+		}else if(workHourCounter <=4){
 			panel.setStyleName("yellow");
-		}else if(workHourCounter <=6){
+		}else if(workHourCounter <=7){
 			panel.setStyleName("orange");
 		}else {
 			panel.setStyleName("red");
@@ -145,10 +153,10 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 		this.setMargin(new MarginInfo(false));
 	
 		this.panel.setWidth(100, Unit.PERCENTAGE);
-		this.panel.setHeight(25, Unit.PIXELS);
+		this.panel.setHeight(20, Unit.PIXELS);
 		this.addComponent(this.panel);
 		this.setComponentAlignment(this.panel, Alignment.MIDDLE_CENTER);
-		this.setExpandRatio(this.panel, 60.0F);
+		this.setExpandRatio(this.panel, 50.0F);
 		this.setSizeFull();
 	} // </generated-code>
 

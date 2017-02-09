@@ -8,7 +8,7 @@
 <XdevHorizontalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" spacing="false" x:name="WeekDayEmployeeColumn" margin="">
     <x:constraints zpos="0" width="100%" height="100%" />
     <XdevPanel x:name="panel">
-        <x:constraints weightx="0.6" width="100%" height="25px" />
+        <x:constraints weightx="0.5" width="100%" height="20px" />
     </XdevPanel>
 </XdevHorizontalLayout>
 

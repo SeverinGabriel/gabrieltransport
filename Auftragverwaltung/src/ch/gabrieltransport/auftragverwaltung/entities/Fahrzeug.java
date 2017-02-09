@@ -1,9 +1,14 @@
 package ch.gabrieltransport.auftragverwaltung.entities;
 
-import com.xdev.util.Caption;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugDAO;
+import com.xdev.dal.DAO;
+import com.xdev.util.Caption;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,37 +17,41 @@ import javax.persistence.Table;
 /**
  * Fahrzeug
  */
+@DAO(daoClass = FahrzeugDAO.class)
 @Caption("{%kennzeichen}")
 @Entity
 @Table(name = "fahrzeug", catalog = "gabrieltransport")
 public class Fahrzeug implements java.io.Serializable {
 
 	private int idfahrzeug;
+	private Anhaengertyp anhaengertyp;
 	private FahrzeugFunktion fahrzeugFunktion;
 	private String kennzeichen;
-	private String gewicht;
+	private Integer nutzlast;
 	private int nummer;
+	private Boolean anhaenger;
 
 	public Fahrzeug() {
 	}
 
-	public Fahrzeug(int idfahrzeug, FahrzeugFunktion fahrzeugFunktion, String kennzeichen, int nummer) {
-		this.idfahrzeug = idfahrzeug;
-		this.fahrzeugFunktion = fahrzeugFunktion;
+	public Fahrzeug(String kennzeichen, int nummer) {
 		this.kennzeichen = kennzeichen;
 		this.nummer = nummer;
 	}
 
-	public Fahrzeug(int idfahrzeug, FahrzeugFunktion fahrzeugFunktion, String kennzeichen, String gewicht, int nummer) {
-		this.idfahrzeug = idfahrzeug;
+	public Fahrzeug(Anhaengertyp anhaengertyp, FahrzeugFunktion fahrzeugFunktion, String kennzeichen, Integer nutzlast,
+			int nummer, Boolean anhaenger) {
+		this.anhaengertyp = anhaengertyp;
 		this.fahrzeugFunktion = fahrzeugFunktion;
 		this.kennzeichen = kennzeichen;
-		this.gewicht = gewicht;
+		this.nutzlast = nutzlast;
 		this.nummer = nummer;
+		this.anhaenger = anhaenger;
 	}
 
 	@Caption("Idfahrzeug")
 	@Id
+	@GeneratedValue(strategy = IDENTITY)
 
 	@Column(name = "idfahrzeug", unique = true, nullable = false, columnDefinition = "INT")
 	public int getIdfahrzeug() {
@@ -53,9 +62,20 @@ public class Fahrzeug implements java.io.Serializable {
 		this.idfahrzeug = idfahrzeug;
 	}
 
+	@Caption("Anhaengertyp")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "AnhaengerTyp", columnDefinition = "INT")
+	public Anhaengertyp getAnhaengertyp() {
+		return this.anhaengertyp;
+	}
+
+	public void setAnhaengertyp(Anhaengertyp anhaengertyp) {
+		this.anhaengertyp = anhaengertyp;
+	}
+
 	@Caption("FahrzeugFunktion")
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "Funktion", nullable = false, columnDefinition = "INT")
+	@JoinColumn(name = "Funktion", columnDefinition = "INT")
 	public FahrzeugFunktion getFahrzeugFunktion() {
 		return this.fahrzeugFunktion;
 	}
@@ -74,14 +94,14 @@ public class Fahrzeug implements java.io.Serializable {
 		this.kennzeichen = kennzeichen;
 	}
 
-	@Caption("Gewicht")
-	@Column(name = "Gewicht", columnDefinition = "VARCHAR", length = 45)
-	public String getGewicht() {
-		return this.gewicht;
+	@Caption("Nutzlast")
+	@Column(name = "Nutzlast", columnDefinition = "INT")
+	public Integer getNutzlast() {
+		return this.nutzlast;
 	}
 
-	public void setGewicht(String gewicht) {
-		this.gewicht = gewicht;
+	public void setNutzlast(Integer nutzlast) {
+		this.nutzlast = nutzlast;
 	}
 
 	@Caption("Nummer")
@@ -92,6 +112,16 @@ public class Fahrzeug implements java.io.Serializable {
 
 	public void setNummer(int nummer) {
 		this.nummer = nummer;
+	}
+
+	@Caption("Anhaenger")
+	@Column(name = "Anhaenger", columnDefinition = "BIT")
+	public Boolean getAnhaenger() {
+		return this.anhaenger;
+	}
+
+	public void setAnhaenger(Boolean anhaenger) {
+		this.anhaenger = anhaenger;
 	}
 
 }

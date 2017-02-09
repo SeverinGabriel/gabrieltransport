@@ -33,6 +33,7 @@ public class Auftrag implements java.io.Serializable {
 
 	private int idAuftrag;
 	private String bezeichung;
+	private String beschreibung;
 	private LocalDateTime vonDatum;
 	private LocalDateTime bisDatum;
 	private Set<Fahrerauftrag> fahrerauftrags = new HashSet<Fahrerauftrag>(0);
@@ -45,9 +46,10 @@ public class Auftrag implements java.io.Serializable {
 		this.bezeichung = bezeichung;
 	}
 
-	public Auftrag(String bezeichung, LocalDateTime vonDatum, LocalDateTime bisDatum, Set<Fahrerauftrag> fahrerauftrags,
+	public Auftrag(String bezeichung, String beschreibung, LocalDateTime vonDatum, LocalDateTime bisDatum, Set<Fahrerauftrag> fahrerauftrags,
 			Set<Fahrzeugauftrag> fahrzeugauftrags) {
 		this.bezeichung = bezeichung;
+		this.beschreibung = beschreibung;
 		this.vonDatum = vonDatum;
 		this.bisDatum = bisDatum;
 		this.fahrerauftrags = fahrerauftrags;
@@ -75,6 +77,16 @@ public class Auftrag implements java.io.Serializable {
 
 	public void setBezeichung(String bezeichung) {
 		this.bezeichung = bezeichung;
+	}
+	
+	@Caption("Beschreibung")
+	@Column(name = "Beschreibung", nullable = true)
+	public String getBeschreibung() {
+		return this.beschreibung;
+	}
+
+	public void setBeschreibung(String beschreibung) {
+		this.beschreibung = beschreibung;
 	}
 
 	@Caption("VonDatum")

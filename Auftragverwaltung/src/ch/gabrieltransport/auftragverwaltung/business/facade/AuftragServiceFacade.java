@@ -40,9 +40,8 @@ public class AuftragServiceFacade {
 	}
 	
 	@Transactional
-	public void persistAuftrag(Auftrag auftrag, Fahrzeug fahrzeug, List<Fahrerauftrag> fahrer){
+	public void persistAuftrag(Auftrag auftrag, List<Fahrzeugauftrag> fahrzeugauftraege, List<Fahrerauftrag> fahrer){
 		try{
-	    	List<Fahrzeugauftrag> fahrzeugauftraege = Arrays.asList(createTaskFromVehicle(auftrag, fahrzeug));
 	    	linkTasks(auftrag, fahrzeugauftraege, fahrer);
 	    	boAuftragService.persistAuftrag(auftrag);
 	    	
@@ -53,11 +52,10 @@ public class AuftragServiceFacade {
 	}
 	
 	@Transactional
-	public Auftrag mergeAuftrag(Auftrag auftrag, Fahrzeug fahrzeug, List<Fahrerauftrag> fahrer){
+	public Auftrag mergeAuftrag(Auftrag auftrag, List<Fahrzeugauftrag> fahrzeugauftraege, List<Fahrerauftrag> fahrer){
 		try{	
 			deleteRelationsFromTask(auftrag);
-			List<Fahrzeugauftrag> fahrzeugauftraege = Arrays.asList(createTaskFromVehicle(auftrag, fahrzeug));
-	    	linkTasks(auftrag, fahrzeugauftraege, fahrer);
+			linkTasks(auftrag, fahrzeugauftraege, fahrer);
 	    	return boAuftragService.mergeAuftrag(auftrag);
 	    	
 		}catch(Exception e){
@@ -77,7 +75,7 @@ public class AuftragServiceFacade {
 		boFzAService.deleteAllFromAuftrag(auftrag);
 	}
 	
-	private Fahrzeugauftrag createTaskFromVehicle(Auftrag auftrag, Fahrzeug fahrzeug){
+	public Fahrzeugauftrag createTaskFromVehicle(Auftrag auftrag, Fahrzeug fahrzeug){
 		Fahrzeugauftrag fzA = new Fahrzeugauftrag();
     	fzA.setAuftrag(auftrag);
     	fzA.setVonDatum(auftrag.getVonDatum());

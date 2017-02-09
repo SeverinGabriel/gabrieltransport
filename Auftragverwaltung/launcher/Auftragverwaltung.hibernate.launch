@@ -8,9 +8,9 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Auftragverwaltung"/>
 <stringAttribute key="org.hibernate.eclipse.launch.CONFIGURATION_FACTORY" value="JPA"/>
-<stringAttribute key="org.hibernate.eclipse.launch.CONNECTION_PROFILE_NAME" value="localhost mysql"/>
+<stringAttribute key="org.hibernate.eclipse.launch.CONNECTION_PROFILE_NAME" value="LocalMySQL"/>
 <listAttribute key="org.hibernate.eclipse.launch.FILE_MAPPINGS"/>
-<stringAttribute key="org.hibernate.eclipse.launch.HIBERNATE_VERSION" value="4.3"/>
+<stringAttribute key="org.hibernate.eclipse.launch.HIBERNATE_VERSION" value="5.2"/>
 <stringAttribute key="org.hibernate.eclipse.launch.PERSISTENCE_UNIT_NAME" value="Auftragverwaltung"/>
-<stringAttribute key="org.hibernate.eclipse.launchDIALECT" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+<stringAttribute key="org.hibernate.eclipse.launchDIALECT" value="org.hibernate.dialect.MySQL57InnoDBDialect"/>
 </launchConfiguration>

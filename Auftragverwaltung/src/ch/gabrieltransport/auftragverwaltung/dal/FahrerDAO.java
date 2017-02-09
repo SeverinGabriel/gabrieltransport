@@ -25,7 +25,7 @@ public class FahrerDAO extends JPADAO<Fahrer, Integer> {
 	@Transactional
 	public List<Fahrer> findAllByFunktion(Fahrerfunktion funktion){
 		Session session = this.getSession(); 
-		String hql = "SELECT f.nachname, f.vorname, f.telefon FROM Fahrer f JOIN f.fahrerfunktionmaps fm WHERE fm.fahrerfunktion = :funktion";
+		String hql = "SELECT f FROM Fahrer f JOIN f.fahrerfunktionmaps fm WHERE fm.fahrerfunktion = :funktion";
 		List<Fahrer> driver = session.createQuery(hql)
 				.setParameter("funktion", funktion)
 				.list();

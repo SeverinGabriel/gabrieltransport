@@ -23,9 +23,6 @@
 			ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag
 		</class>
 		<class>
-			ch.gabrieltransport.auftragverwaltung.entities.Fahrer
-		</class>
-		<class>
 			ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag
 		</class>
 		<class>
@@ -34,15 +31,38 @@
 		<class>
 			ch.gabrieltransport.auftragverwaltung.entities.Auftrag
 		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.FahrzeugFunktion
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Fahrer
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktionmap
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp
+		</class>
+		<class>
+			ch.gabrieltransport.auftragverwaltung.entities.Anhaenger
+		</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
-			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="javax.persistence.sharedCache.mode"
 				value="DISABLE_SELECTIVE" />
+			<property name="hibernate.c3p0.max_size" value="100" />
+			<property name="hibernate.c3p0.idle_test_period"
+				value="300" />
+			<property name="hibernate.c3p0.max_statements" value="50" />
 			<property name="hibernate.dialect"
-				value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+				value="org.hibernate.dialect.MySQL57InnoDBDialect" />
 			<property name="hibernate.cache.use_query_cache"
 				value="false" />
+			<property name="hibernate.c3p0.min_size" value="1" />
 			<property name="hibernate.archive.autodetection" value="" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="false" />
@@ -53,7 +73,7 @@
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.cache.region.factory_class"
-				value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
+				value="org.hibernate.cache.jcache.JCacheRegionFactory" />
 			<property name="javax.persistence.jdbc.driver"
 				value="org.gjt.mm.mysql.Driver" />
 			<property name="javax.persistence.jdbc.password"
