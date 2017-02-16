@@ -3,11 +3,14 @@
 
 <?xdevuiml version="1.0"?>
 <?template BROWSER_WSXGA?>
-<?import ??>
-<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag?>
+<?import?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag?>
+<?import com.xdev.ui.XdevButton?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevHorizontalLayout?>
 <?import com.xdev.ui.XdevPopupDateField?>
+<?import com.xdev.ui.XdevTextField?>
 <?import com.xdev.ui.XdevView?>
 <?import com.xdev.ui.entitycomponent.combobox.XdevComboBox?>
 <?import com.xdev.ui.entitycomponent.table.XdevTable?>
@@ -18,31 +21,56 @@
     <XdevGridLayout x:name="gridLayout">
         <x:constraints zpos="0" width="100%" height="100%" />
         <XdevHorizontalLayout x:name="horizontalLayout">
-            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" width="100%" height="100px" />
-            <XdevComboBox x:name="comboBox">
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.1" width="100%" height="100px" />
+            <XdevComboBox itemCaptionFromAnnotation="false" x:name="comboBox" x:entity="Fahrer">
                 <x:constraints gridHeight="1" gridx="2" gridy="1" weighty="0.0" weightx="0.0" alignment="TOP_LEFT" gridWidth="1" />
+                <x:entityProperty>
+                    <entry type="String" property="name" />
+                </x:entityProperty>
                 <x:typeArguments>
-                    <typeArgument type="?" />
+                    <typeArgument type="Fahrer" />
                 </x:typeArguments>
+                <x:event>valueChange.valueChange</x:event>
             </XdevComboBox>
-            <XdevPopupDateField x:name="popupDateField">
+            <XdevPopupDateField x:name="dateFrom">
                 <x:constraints weightx="0.0" />
+                <x:event>valueChange.valueChange</x:event>
             </XdevPopupDateField>
-            <XdevPopupDateField x:name="popupDateField2">
+            <XdevPopupDateField x:name="dateUntil">
                 <x:constraints weightx="0.0" />
+                <x:event>valueChange.valueChange</x:event>
             </XdevPopupDateField>
         </XdevHorizontalLayout>
-        <XdevTable x:name="table" x:entity="Fahrerauftrag" x:autoQuery="false">
+        <XdevTable x:name="tblDriverTask" x:entity="Fahrerauftrag" x:autoQuery="false">
             <x:entityProperties>
-                <entry type="String" property="auftrag.bezeichung" />
-                <entry type="LocalDateTime" property="vonDatum" />
-                <entry type="LocalDateTime" property="bisDatum" />
+                <entry type="String" property="auftrag.bezeichung" caption="Bezeichnung" />
+                <entry type="LocalDateTime" property="vonDatum" caption="Von" />
+                <entry type="LocalDateTime" property="bisDatum" caption="Bis" />
+                <entry type="" property="delete" caption=" " generator="ch.gabrieltransport.auftragverwaltung.ui.DriverTaskDeleteColumn.Generator" />
             </x:entityProperties>
-            <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="0.1" width="100%" height="100%" />
             <x:typeArguments>
                 <typeArgument type="Fahrerauftrag" />
             </x:typeArguments>
         </XdevTable>
+        <XdevHorizontalLayout caption="Ferien erfassen" x:name="horizontalLayout2" margin="">
+            <x:constraints gridx="1" gridy="3" weighty="0.12" weightx="0.1" width="100%" height="100%" />
+            <XdevPopupDateField caption="von" x:name="popupDateField3">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+            </XdevPopupDateField>
+            <XdevTextField columns="5" caption="Zeit von (hh:mm)" x:name="textField2" value="00:00">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+            </XdevTextField>
+            <XdevPopupDateField caption="bis" x:name="popupDateField2">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+            </XdevPopupDateField>
+            <XdevTextField columns="5" caption="Zeit bis (hh:mm)" x:name="textField" value="00:00">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+            </XdevTextField>
+            <XdevButton caption="Erfassen" x:name="button">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+            </XdevButton>
+        </XdevHorizontalLayout>
     </XdevGridLayout>
 </XdevView>
 

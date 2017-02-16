@@ -26,10 +26,12 @@ import com.vaadin.ui.Window;
 import com.xdev.dal.DAOs;
 import com.xdev.ui.XdevAbsoluteLayout;
 import com.xdev.ui.XdevButton;
+import com.xdev.ui.XdevCheckBox;
 import com.xdev.ui.XdevGridLayout;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.XdevLabel;
 import com.xdev.ui.XdevPopupDateField;
+import com.xdev.ui.XdevTextArea;
 import com.xdev.ui.XdevTextField;
 import com.xdev.ui.XdevVerticalLayout;
 import com.xdev.ui.XdevView;
@@ -42,13 +44,13 @@ import ch.gabrieltransport.auftragverwaltung.dal.AnhaengerDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger_;
-import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug_;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Auftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
 
 public class taskDetail extends XdevView {
 
@@ -78,6 +80,9 @@ public class taskDetail extends XdevView {
 		this.callback = callback;
 		currentTask = auftrag.getAuftrag();
 		txtDescription.setValue(currentTask.getBezeichung());
+		if (currentTask.getBeschreibung() != null) {
+			txtADescription.setValue(currentTask.getBeschreibung());
+		}
 		this.fahrzeugAuftrag = auftrag;
 		setTime(fahrzeugAuftrag.getVonDatum(), fahrzeugAuftrag.getBisDatum());
 		fromDate.setValue(Date.from(fahrzeugAuftrag.getVonDatum().atZone(ZoneId.systemDefault()).toInstant()));
@@ -162,7 +167,7 @@ public class taskDetail extends XdevView {
 	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
 	 */
 	private void cmbVehicle_valueChange(Property.ValueChangeEvent event) {
-		lblWeight.setValue( String.valueOf(cmbVehicle.getSelectedItem().getBean().getNutzlast()));
+		lblWeight.setValue( String.valueOf(cmbVehicle.getSelectedItem().getBean().getNutzlast()) + " kg");
 		lblSign.setValue(cmbVehicle.getSelectedItem().getBean().getKennzeichen());
 		initTrailer(cmbVehicle.getSelectedItem().getBean());
 	}
@@ -188,6 +193,7 @@ public class taskDetail extends XdevView {
 	 */
 	private void btnSave_buttonClick(Button.ClickEvent event) {
 		currentTask.setBezeichung(txtDescription.getValue());
+		currentTask.setBeschreibung(txtADescription.getValue());
 		
 		LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -277,16 +283,6 @@ public class taskDetail extends XdevView {
 	}
 	
 	/**
-	 * Event handler delegate method for the {@link XdevButton} {@link #button}.
-	 *
-	 * @see Button.ClickListener#buttonClick(Button.ClickEvent)
-	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
-	 */
-	private void button_buttonClick(Button.ClickEvent event) {
-	
-	}
-	
-	/**
 	 * Event handler delegate method for the {@link XdevPopupDateField}
 	 * {@link #fromDate}.
 	 *
@@ -346,12 +342,53 @@ public class taskDetail extends XdevView {
 	private void cmbTrailer_valueChange(Property.ValueChangeEvent event) {
 		if(cmbTrailer.getValue() != null){
 			lblTrailerSign.setValue(cmbTrailer.getSelectedItem().getBean().getKennzeichen());
-			lblTrailerWeight.setValue(String.valueOf(cmbTrailer.getSelectedItem().getBean().getNutzlast()));
+			lblTrailerWeight.setValue(String.valueOf(cmbTrailer.getSelectedItem().getBean().getNutzlast()) + " kg");
 			lblTrailerTyp.setValue(cmbTrailer.getSelectedItem().getBean().getAnhaengertyp().getBeschreibung());
 		}else{
 			lblTrailerSign.setValue("");
 			lblTrailerWeight.setValue("");
 			lblTrailerTyp.setValue("");
+		}
+	}
+	/**
+	 * Event handler delegate method for the {@link XdevCheckBox} {@link #chkUmzug}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void chkUmzug_valueChange(Property.ValueChangeEvent event) {
+		chkLift.setValue(false);
+		if(chkUmzug.getValue()){
+			chkGarage.setValue(false);
+			chkGarage.setVisible(false);
+			chkLift.setVisible(true);
+		}else{
+			chkLift.setVisible(false);
+			chkGarage.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Event handler delegate method for the {@link XdevCheckBox}
+	 * {@link #chkGarage}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void chkGarage_valueChange(Property.ValueChangeEvent event) {
+		if (chkGarage.getValue()) {
+			chkUmzug.setValue(false);
+			chkUmzug.setVisible(false);
+			hlTrailer.setVisible(false);
+			lblDriver.setVisible(false);
+			horizontalLayout5.setVisible(false);
+			horizontalLayout6.setVisible(false);
+		}else{
+			chkUmzug.setVisible(true);
+			hlTrailer.setVisible(true);
+			lblDriver.setVisible(true);
+			horizontalLayout5.setVisible(true);
+			horizontalLayout6.setVisible(true);
 		}
 	}
 	/*
@@ -364,14 +401,16 @@ public class taskDetail extends XdevView {
 		this.verticalLayout = new XdevVerticalLayout();
 		this.horizontalLayout4 = new XdevHorizontalLayout();
 		this.lblMission = new XdevLabel();
-		this.button3 = new XdevButton();
-		this.horizontalLayout = new XdevHorizontalLayout();
-		this.lblDescription = new XdevLabel();
 		this.txtDescription = new XdevTextField();
+		this.button3 = new XdevButton();
+		this.horizontalLayout7 = new XdevHorizontalLayout();
+		this.chkUmzug = new XdevCheckBox();
+		this.chkLift = new XdevCheckBox();
+		this.chkGarage = new XdevCheckBox();
+		this.horizontalLayout = new XdevHorizontalLayout();
+		this.txtADescription = new XdevTextArea();
 		this.gridLayout = new XdevGridLayout();
-		this.label3 = new XdevLabel();
 		this.fromDate = new XdevPopupDateField();
-		this.label4 = new XdevLabel();
 		this.untilDate = new XdevPopupDateField();
 		this.horizontalLayout3 = new XdevHorizontalLayout();
 		this.optionGroup = new XdevOptionGroup<>();
@@ -394,20 +433,25 @@ public class taskDetail extends XdevView {
 		this.lblDriver = new XdevLabel();
 		this.horizontalLayout6 = new XdevHorizontalLayout();
 		this.containerFilterComponent = new XdevContainerFilterComponent();
-		this.button = new XdevButton();
 		this.horizontalLayout5 = new XdevHorizontalLayout();
 		this.tsDriver = new XdevTwinColSelect<>();
 		this.btnSave = new XdevButton();
 		this.btnCancel = new XdevButton();
 	
 		this.verticalLayout.setMargin(new MarginInfo(true, false, false, false));
+		this.horizontalLayout4.setMargin(new MarginInfo(false, true, false, true));
 		this.lblMission.setValue("Auftrag");
 		this.button3.setCaption("Delete");
-		this.horizontalLayout.setMargin(new MarginInfo(false, true, true, true));
-		this.lblDescription.setValue("Bezeichnung");
+		this.horizontalLayout7.setMargin(new MarginInfo(false, true, false, true));
+		this.chkUmzug.setCaption("Umzug");
+		this.chkLift.setCaption("Möbellift");
+		this.chkLift.setVisible(false);
+		this.chkGarage.setCaption("Garage");
+		this.horizontalLayout.setMargin(new MarginInfo(false, true, false, true));
+		this.txtADescription.setCaption("Bemerkung");
 		this.gridLayout.setMargin(new MarginInfo(false));
-		this.label3.setValue("Von");
-		this.label4.setValue("Bis");
+		this.fromDate.setCaption("Von");
+		this.untilDate.setCaption("Bis");
 		this.horizontalLayout3.setMargin(new MarginInfo(false, true, true, true));
 		this.gridLayout2.setMargin(new MarginInfo(false));
 		this.gridLayout2.setVisible(false);
@@ -425,21 +469,19 @@ public class taskDetail extends XdevView {
 		this.hlTrailer.setMargin(new MarginInfo(false, true, true, true));
 		this.hlTrailer.setVisible(false);
 		this.cmbTrailer.setInvalidAllowed(false);
+		this.cmbTrailer.setCaption("Anhänger");
 		this.cmbTrailer.setItemCaptionFromAnnotation(false);
 		this.cmbTrailer.setContainerDataSource(Anhaenger.class, false);
 		this.cmbTrailer.setItemCaptionPropertyId(Anhaenger_.nummer.getName());
-		this.lblTrailerSign.setValue("Label");
-		this.lblTrailerWeight.setValue("Label");
-		this.lblTrailerTyp.setValue("Label");
 		this.lblDriver.setValue("Fahrer");
-		this.button.setCaption("Detailplanung");
-		this.horizontalLayout5.setMargin(new MarginInfo(false));
+		this.horizontalLayout6.setMargin(new MarginInfo(false, true, false, true));
+		this.horizontalLayout5.setMargin(new MarginInfo(false, true, false, true));
 		this.tsDriver.setItemCaptionFromAnnotation(false);
 		this.tsDriver.setRightColumnCaption("zugewiesen");
 		this.tsDriver.setLeftColumnCaption("verfügbar");
-		this.tsDriver.setRows(4);
+		this.tsDriver.setRows(8);
 		this.tsDriver.setContainerDataSource(Fahrer.class, DAOs.get(FahrerDAO.class).findAll());
-		this.tsDriver.setItemCaptionPropertyId(Fahrer_.nachname.getName());
+		this.tsDriver.setItemCaptionPropertyId(Fahrer_.name.getName());
 		this.btnSave.setCaption("OK");
 		this.btnCancel.setCaption("Abbrechen");
 	
@@ -447,39 +489,49 @@ public class taskDetail extends XdevView {
 		this.containerFilterComponent.setSearchableProperties("nachname", "vorname");
 	
 		this.lblMission.setWidth(100, Unit.PERCENTAGE);
-		this.lblMission.setHeight(-1, Unit.PIXELS);
+		this.lblMission.setHeight(35, Unit.PIXELS);
 		this.horizontalLayout4.addComponent(this.lblMission);
-		this.horizontalLayout4.setComponentAlignment(this.lblMission, Alignment.BOTTOM_LEFT);
-		this.horizontalLayout4.setExpandRatio(this.lblMission, 60.0F);
-		this.button3.setWidth(-1, Unit.PIXELS);
-		this.button3.setHeight(30, Unit.PIXELS);
-		this.horizontalLayout4.addComponent(this.button3);
-		this.horizontalLayout4.setComponentAlignment(this.button3, Alignment.BOTTOM_LEFT);
-		this.gridLayout.setColumns(2);
-		this.gridLayout.setRows(3);
-		this.label3.setSizeUndefined();
-		this.gridLayout.addComponent(this.label3, 0, 0);
-		this.fromDate.setWidth(100, Unit.PERCENTAGE);
-		this.fromDate.setHeight(-1, Unit.PIXELS);
-		this.gridLayout.addComponent(this.fromDate, 1, 0);
-		this.label4.setSizeUndefined();
-		this.gridLayout.addComponent(this.label4, 0, 1);
-		this.untilDate.setWidth(100, Unit.PERCENTAGE);
-		this.untilDate.setHeight(-1, Unit.PIXELS);
-		this.gridLayout.addComponent(this.untilDate, 1, 1);
-		this.gridLayout.setColumnExpandRatio(1, 10.0F);
-		final CustomComponent gridLayout_vSpacer = new CustomComponent();
-		gridLayout_vSpacer.setSizeFull();
-		this.gridLayout.addComponent(gridLayout_vSpacer, 0, 2, 1, 2);
-		this.gridLayout.setRowExpandRatio(2, 1.0F);
-		this.lblDescription.setSizeUndefined();
-		this.horizontalLayout.addComponent(this.lblDescription);
-		this.horizontalLayout.setComponentAlignment(this.lblDescription, Alignment.TOP_CENTER);
+		this.horizontalLayout4.setComponentAlignment(this.lblMission, Alignment.BOTTOM_CENTER);
+		this.horizontalLayout4.setExpandRatio(this.lblMission, 10.0F);
 		this.txtDescription.setWidth(100, Unit.PERCENTAGE);
 		this.txtDescription.setHeight(-1, Unit.PIXELS);
-		this.horizontalLayout.addComponent(this.txtDescription);
-		this.horizontalLayout.setComponentAlignment(this.txtDescription, Alignment.TOP_CENTER);
-		this.horizontalLayout.setExpandRatio(this.txtDescription, 10.0F);
+		this.horizontalLayout4.addComponent(this.txtDescription);
+		this.horizontalLayout4.setComponentAlignment(this.txtDescription, Alignment.BOTTOM_CENTER);
+		this.horizontalLayout4.setExpandRatio(this.txtDescription, 60.0F);
+		this.button3.setWidth(-1, Unit.PIXELS);
+		this.button3.setHeight(37, Unit.PIXELS);
+		this.horizontalLayout4.addComponent(this.button3);
+		this.horizontalLayout4.setComponentAlignment(this.button3, Alignment.BOTTOM_LEFT);
+		this.chkUmzug.setSizeUndefined();
+		this.horizontalLayout7.addComponent(this.chkUmzug);
+		this.horizontalLayout7.setComponentAlignment(this.chkUmzug, Alignment.MIDDLE_CENTER);
+		this.chkLift.setSizeUndefined();
+		this.horizontalLayout7.addComponent(this.chkLift);
+		this.horizontalLayout7.setComponentAlignment(this.chkLift, Alignment.MIDDLE_CENTER);
+		this.chkGarage.setSizeUndefined();
+		this.horizontalLayout7.addComponent(this.chkGarage);
+		this.horizontalLayout7.setComponentAlignment(this.chkGarage, Alignment.MIDDLE_CENTER);
+		final CustomComponent horizontalLayout7_spacer = new CustomComponent();
+		horizontalLayout7_spacer.setSizeFull();
+		this.horizontalLayout7.addComponent(horizontalLayout7_spacer);
+		this.horizontalLayout7.setExpandRatio(horizontalLayout7_spacer, 1.0F);
+		this.gridLayout.setColumns(1);
+		this.gridLayout.setRows(3);
+		this.fromDate.setWidth(100, Unit.PERCENTAGE);
+		this.fromDate.setHeight(-1, Unit.PIXELS);
+		this.gridLayout.addComponent(this.fromDate, 0, 0);
+		this.untilDate.setWidth(100, Unit.PERCENTAGE);
+		this.untilDate.setHeight(-1, Unit.PIXELS);
+		this.gridLayout.addComponent(this.untilDate, 0, 1);
+		this.gridLayout.setColumnExpandRatio(0, 10.0F);
+		final CustomComponent gridLayout_vSpacer = new CustomComponent();
+		gridLayout_vSpacer.setSizeFull();
+		this.gridLayout.addComponent(gridLayout_vSpacer, 0, 2, 0, 2);
+		this.gridLayout.setRowExpandRatio(2, 1.0F);
+		this.txtADescription.setSizeFull();
+		this.horizontalLayout.addComponent(this.txtADescription);
+		this.horizontalLayout.setComponentAlignment(this.txtADescription, Alignment.MIDDLE_CENTER);
+		this.horizontalLayout.setExpandRatio(this.txtADescription, 10.0F);
 		this.gridLayout.setSizeFull();
 		this.horizontalLayout.addComponent(this.gridLayout);
 		this.horizontalLayout.setComponentAlignment(this.gridLayout, Alignment.MIDDLE_RIGHT);
@@ -522,46 +574,44 @@ public class taskDetail extends XdevView {
 		this.horizontalLayout2.addComponent(this.lblWeight);
 		this.horizontalLayout2.setComponentAlignment(this.lblWeight, Alignment.MIDDLE_CENTER);
 		this.horizontalLayout2.setExpandRatio(this.lblWeight, 30.0F);
-		this.cmbTrailer.setSizeUndefined();
+		this.cmbTrailer.setWidth(100, Unit.PERCENTAGE);
+		this.cmbTrailer.setHeight(-1, Unit.PIXELS);
 		this.hlTrailer.addComponent(this.cmbTrailer);
-		this.hlTrailer.setComponentAlignment(this.cmbTrailer, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setComponentAlignment(this.cmbTrailer, Alignment.MIDDLE_LEFT);
 		this.hlTrailer.setExpandRatio(this.cmbTrailer, 30.0F);
 		this.lblTrailerSign.setSizeUndefined();
 		this.hlTrailer.addComponent(this.lblTrailerSign);
-		this.hlTrailer.setComponentAlignment(this.lblTrailerSign, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerSign, Alignment.BOTTOM_CENTER);
 		this.hlTrailer.setExpandRatio(this.lblTrailerSign, 20.0F);
 		this.lblTrailerWeight.setSizeUndefined();
 		this.hlTrailer.addComponent(this.lblTrailerWeight);
-		this.hlTrailer.setComponentAlignment(this.lblTrailerWeight, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerWeight, Alignment.BOTTOM_CENTER);
 		this.hlTrailer.setExpandRatio(this.lblTrailerWeight, 20.0F);
 		this.lblTrailerTyp.setSizeUndefined();
 		this.hlTrailer.addComponent(this.lblTrailerTyp);
-		this.hlTrailer.setComponentAlignment(this.lblTrailerTyp, Alignment.MIDDLE_CENTER);
+		this.hlTrailer.setComponentAlignment(this.lblTrailerTyp, Alignment.BOTTOM_CENTER);
 		this.hlTrailer.setExpandRatio(this.lblTrailerTyp, 20.0F);
 		this.containerFilterComponent.setWidth(100, Unit.PERCENTAGE);
 		this.containerFilterComponent.setHeight(-1, Unit.PIXELS);
 		this.horizontalLayout6.addComponent(this.containerFilterComponent);
 		this.horizontalLayout6.setComponentAlignment(this.containerFilterComponent, Alignment.MIDDLE_CENTER);
 		this.horizontalLayout6.setExpandRatio(this.containerFilterComponent, 100.0F);
-		this.button.setSizeUndefined();
-		this.horizontalLayout6.addComponent(this.button);
-		this.horizontalLayout6.setComponentAlignment(this.button, Alignment.MIDDLE_CENTER);
-		this.tsDriver.setSizeUndefined();
+		this.tsDriver.setSizeFull();
 		this.horizontalLayout5.addComponent(this.tsDriver);
 		this.horizontalLayout5.setComponentAlignment(this.tsDriver, Alignment.MIDDLE_CENTER);
-		final CustomComponent horizontalLayout5_spacer = new CustomComponent();
-		horizontalLayout5_spacer.setSizeFull();
-		this.horizontalLayout5.addComponent(horizontalLayout5_spacer);
-		this.horizontalLayout5.setExpandRatio(horizontalLayout5_spacer, 1.0F);
-		this.horizontalLayout4.setWidth(100, Unit.PERCENTAGE);
-		this.horizontalLayout4.setHeight(100, Unit.PIXELS);
+		this.horizontalLayout5.setExpandRatio(this.tsDriver, 100.0F);
+		this.horizontalLayout4.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout4);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout4, Alignment.MIDDLE_CENTER);
-		this.horizontalLayout.setWidth(100, Unit.PERCENTAGE);
-		this.horizontalLayout.setHeight(-1, Unit.PIXELS);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout4, 15.0F);
+		this.horizontalLayout7.setSizeFull();
+		this.verticalLayout.addComponent(this.horizontalLayout7);
+		this.verticalLayout.setComponentAlignment(this.horizontalLayout7, Alignment.MIDDLE_CENTER);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout7, 5.0F);
+		this.horizontalLayout.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout, Alignment.MIDDLE_CENTER);
-		this.verticalLayout.setExpandRatio(this.horizontalLayout, 10.0F);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout, 24.0F);
 		this.horizontalLayout3.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout3);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout3, Alignment.MIDDLE_CENTER);
@@ -570,24 +620,23 @@ public class taskDetail extends XdevView {
 		this.verticalLayout.addComponent(this.lblVehicle);
 		this.verticalLayout.setComponentAlignment(this.lblVehicle, Alignment.BOTTOM_LEFT);
 		this.verticalLayout.setExpandRatio(this.lblVehicle, 3.0F);
-		this.horizontalLayout2.setWidth(100, Unit.PERCENTAGE);
-		this.horizontalLayout2.setHeight(-1, Unit.PIXELS);
+		this.horizontalLayout2.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout2);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout2, Alignment.MIDDLE_CENTER);
 		this.verticalLayout.setExpandRatio(this.horizontalLayout2, 10.0F);
 		this.hlTrailer.setSizeFull();
 		this.verticalLayout.addComponent(this.hlTrailer);
 		this.verticalLayout.setComponentAlignment(this.hlTrailer, Alignment.MIDDLE_CENTER);
-		this.verticalLayout.setExpandRatio(this.hlTrailer, 10.0F);
+		this.verticalLayout.setExpandRatio(this.hlTrailer, 15.0F);
 		this.lblDriver.setSizeUndefined();
 		this.verticalLayout.addComponent(this.lblDriver);
 		this.verticalLayout.setComponentAlignment(this.lblDriver, Alignment.BOTTOM_LEFT);
 		this.verticalLayout.setExpandRatio(this.lblDriver, 3.0F);
-		this.horizontalLayout6.setWidth(100, Unit.PERCENTAGE);
-		this.horizontalLayout6.setHeight(100, Unit.PIXELS);
+		this.horizontalLayout6.setSizeFull();
 		this.verticalLayout.addComponent(this.horizontalLayout6);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout6, Alignment.MIDDLE_CENTER);
-		this.horizontalLayout5.setWidth(430, Unit.PIXELS);
+		this.verticalLayout.setExpandRatio(this.horizontalLayout6, 7.0F);
+		this.horizontalLayout5.setWidth(100, Unit.PERCENTAGE);
 		this.horizontalLayout5.setHeight(181, Unit.PIXELS);
 		this.verticalLayout.addComponent(this.horizontalLayout5);
 		this.verticalLayout.setComponentAlignment(this.horizontalLayout5, Alignment.MIDDLE_CENTER);
@@ -603,6 +652,18 @@ public class taskDetail extends XdevView {
 		this.setHeight(1050, Unit.PIXELS);
 	
 		this.button3.addClickListener(event -> this.button3_buttonClick(event));
+		this.chkUmzug.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				taskDetail.this.chkUmzug_valueChange(event);
+			}
+		});
+		this.chkGarage.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				taskDetail.this.chkGarage_valueChange(event);
+			}
+		});
 		this.fromDate.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
@@ -633,25 +694,26 @@ public class taskDetail extends XdevView {
 				taskDetail.this.cmbTrailer_valueChange(event);
 			}
 		});
-		this.button.addClickListener(event -> this.button_buttonClick(event));
 		this.btnSave.addClickListener(event -> this.btnSave_buttonClick(event));
 		this.btnCancel.addClickListener(event -> this.btnCancel_buttonClick(event));
 	} // </generated-code>
 
 	// <generated-code name="variables">
-	private XdevLabel lblMission, lblDescription, label3, label4, label10, label8, label9, lblVehicle, lblSign, lblWeight,
-			lblTrailerSign, lblTrailerWeight, lblTrailerTyp, lblDriver;
-	private XdevButton button3, button, btnSave, btnCancel;
+	private XdevLabel lblMission, label10, label8, label9, lblVehicle, lblSign, lblWeight, lblTrailerSign, lblTrailerWeight,
+			lblTrailerTyp, lblDriver;
+	private XdevButton button3, btnSave, btnCancel;
 	private XdevGridLayout gridLayout, gridLayout2;
 	private XdevOptionGroup<String> optionGroup;
 	private XdevComboBox<Fahrzeug> cmbVehicle;
 	private XdevContainerFilterComponent containerFilterComponent;
 	private XdevComboBox<Anhaenger> cmbTrailer;
 	private XdevTwinColSelect<Fahrer> tsDriver;
-	private XdevHorizontalLayout horizontalLayout4, horizontalLayout, horizontalLayout3, horizontalLayout2, hlTrailer,
-			horizontalLayout6, horizontalLayout5;
+	private XdevHorizontalLayout horizontalLayout4, horizontalLayout7, horizontalLayout, horizontalLayout3,
+			horizontalLayout2, hlTrailer, horizontalLayout6, horizontalLayout5;
 	private XdevAbsoluteLayout absoluteLayout;
+	private XdevTextArea txtADescription;
 	private XdevPopupDateField fromDate, untilDate;
+	private XdevCheckBox chkUmzug, chkLift, chkGarage;
 	private XdevTextField txtDescription, lblTimeFrom, txtTimeUntil;
 	private XdevVerticalLayout verticalLayout;
 	// </generated-code>

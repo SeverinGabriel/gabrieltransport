@@ -1,26 +1,97 @@
 package ch.gabrieltransport.auftragverwaltung.ui;
 
+import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag_;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag_;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import com.vaadin.data.Property;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CustomComponent;
+import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevGridLayout;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.XdevPopupDateField;
+import com.xdev.ui.XdevTextArea;
+import com.xdev.ui.XdevTextField;
 import com.xdev.ui.XdevView;
 import com.xdev.ui.entitycomponent.combobox.XdevComboBox;
 import com.xdev.ui.entitycomponent.table.XdevTable;
+import com.xdev.ui.masterdetail.MasterDetail;
 import com.xdev.ui.util.NestedProperty;
 
 public class driverDetail extends XdevView {
 
+	
+	FahrerauftragDAO faDAO = new FahrerauftragDAO();
 	/**
 	 * 
 	 */
-	public driverDetail() {
+	public driverDetail(Fahrer driver, LocalDateTime weekStart) {
 		super();
 		this.initUI();
+		dateFrom.setValue(Date.from(weekStart.atZone(ZoneId.systemDefault()).toInstant()));
+		dateUntil.setValue(Date.from(weekStart.plusDays(6).atZone(ZoneId.systemDefault()).toInstant()));
+		comboBox.select(driver.getIdfahrer());
+	}
+
+	/**
+	 * Event handler delegate method for the {@link XdevComboBox} {@link #comboBox}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void comboBox_valueChange(Property.ValueChangeEvent event) {
+		fillTable();
+	}
+	
+	private void fillTable(){
+		if (!dateFrom.isEmpty() && !dateUntil.isEmpty()) {
+			LocalDate ldFrom = dateFrom.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate ldUntil = dateUntil.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			if (comboBox.getSelectedItem() != null) {
+				Fahrer driver = comboBox.getSelectedItem().getBean();
+				if(driver != null && (ldFrom.isBefore(ldUntil) || ldFrom.isEqual(ldUntil))){
+					List<Fahrerauftrag> tasks = faDAO.findAuftragebetween(ldFrom, ldUntil, driver);
+					tblDriverTask.getBeanContainerDataSource().removeAll();
+					tblDriverTask.getBeanContainerDataSource().addAll(tasks);
+				}
+			}
+			
+		}
+	}
+
+	/**
+	 * Event handler delegate method for the {@link XdevPopupDateField}
+	 * {@link #dateFrom}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void dateFrom_valueChange(Property.ValueChangeEvent event) {
+		fillTable();
+	}
+
+	/**
+	 * Event handler delegate method for the {@link XdevPopupDateField}
+	 * {@link #dateUntil}.
+	 *
+	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void dateUntil_valueChange(Property.ValueChangeEvent event) {
+		fillTable();
 	}
 
 	/*
@@ -32,46 +103,115 @@ public class driverDetail extends XdevView {
 		this.gridLayout = new XdevGridLayout();
 		this.horizontalLayout = new XdevHorizontalLayout();
 		this.comboBox = new XdevComboBox<>();
-		this.popupDateField = new XdevPopupDateField();
+		this.dateFrom = new XdevPopupDateField();
+		this.dateUntil = new XdevPopupDateField();
+		this.tblDriverTask = new XdevTable<>();
+		this.horizontalLayout2 = new XdevHorizontalLayout();
+		this.popupDateField3 = new XdevPopupDateField();
+		this.textField2 = new XdevTextField();
 		this.popupDateField2 = new XdevPopupDateField();
-		this.table = new XdevTable<>();
+		this.textField = new XdevTextField();
+		this.button = new XdevButton();
 	
-		this.table.setContainerDataSource(Fahrerauftrag.class, false,
+		this.comboBox.setItemCaptionFromAnnotation(false);
+		this.comboBox.setContainerDataSource(Fahrer.class);
+		this.comboBox.setItemCaptionPropertyId(Fahrer_.name.getName());
+		this.tblDriverTask.setContainerDataSource(Fahrerauftrag.class, false,
 				NestedProperty.of(Fahrerauftrag_.auftrag, Auftrag_.bezeichung));
-		this.table.setVisibleColumns(NestedProperty.path(Fahrerauftrag_.auftrag, Auftrag_.bezeichung),
-				Fahrerauftrag_.vonDatum.getName(), Fahrerauftrag_.bisDatum.getName());
+		this.tblDriverTask.addGeneratedColumn("delete", new DriverTaskDeleteColumn.Generator());
+		this.tblDriverTask.setVisibleColumns(NestedProperty.path(Fahrerauftrag_.auftrag, Auftrag_.bezeichung),
+				Fahrerauftrag_.vonDatum.getName(), Fahrerauftrag_.bisDatum.getName(), "delete");
+		this.tblDriverTask.setColumnHeader("auftrag.bezeichung", "Bezeichnung");
+		this.tblDriverTask.setColumnHeader("vonDatum", "Von");
+		this.tblDriverTask.setColumnHeader("bisDatum", "Bis");
+		this.tblDriverTask.setColumnHeader("delete", " ");
+		this.horizontalLayout2.setCaption("Ferien erfassen");
+		this.horizontalLayout2.setMargin(new MarginInfo(false));
+		this.popupDateField3.setCaption("von");
+		this.textField2.setColumns(5);
+		this.textField2.setCaption("Zeit von (hh:mm)");
+		this.textField2.setValue("00:00");
+		this.popupDateField2.setCaption("bis");
+		this.textField.setColumns(5);
+		this.textField.setCaption("Zeit bis (hh:mm)");
+		this.textField.setValue("00:00");
+		this.button.setCaption("Erfassen");
 	
 		this.comboBox.setSizeUndefined();
 		this.horizontalLayout.addComponent(this.comboBox);
-		this.popupDateField.setSizeUndefined();
-		this.horizontalLayout.addComponent(this.popupDateField);
-		this.horizontalLayout.setComponentAlignment(this.popupDateField, Alignment.MIDDLE_CENTER);
-		this.popupDateField2.setSizeUndefined();
-		this.horizontalLayout.addComponent(this.popupDateField2);
-		this.horizontalLayout.setComponentAlignment(this.popupDateField2, Alignment.MIDDLE_CENTER);
+		this.dateFrom.setSizeUndefined();
+		this.horizontalLayout.addComponent(this.dateFrom);
+		this.horizontalLayout.setComponentAlignment(this.dateFrom, Alignment.MIDDLE_CENTER);
+		this.dateUntil.setSizeUndefined();
+		this.horizontalLayout.addComponent(this.dateUntil);
+		this.horizontalLayout.setComponentAlignment(this.dateUntil, Alignment.MIDDLE_CENTER);
 		final CustomComponent horizontalLayout_spacer = new CustomComponent();
 		horizontalLayout_spacer.setSizeFull();
 		this.horizontalLayout.addComponent(horizontalLayout_spacer);
 		this.horizontalLayout.setExpandRatio(horizontalLayout_spacer, 1.0F);
+		this.popupDateField3.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.popupDateField3);
+		this.horizontalLayout2.setComponentAlignment(this.popupDateField3, Alignment.BOTTOM_CENTER);
+		this.textField2.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.textField2);
+		this.horizontalLayout2.setComponentAlignment(this.textField2, Alignment.BOTTOM_CENTER);
+		this.popupDateField2.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.popupDateField2);
+		this.horizontalLayout2.setComponentAlignment(this.popupDateField2, Alignment.BOTTOM_CENTER);
+		this.textField.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.textField);
+		this.horizontalLayout2.setComponentAlignment(this.textField, Alignment.BOTTOM_CENTER);
+		this.button.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.button);
+		this.horizontalLayout2.setComponentAlignment(this.button, Alignment.BOTTOM_CENTER);
+		final CustomComponent horizontalLayout2_spacer = new CustomComponent();
+		horizontalLayout2_spacer.setSizeFull();
+		this.horizontalLayout2.addComponent(horizontalLayout2_spacer);
+		this.horizontalLayout2.setExpandRatio(horizontalLayout2_spacer, 1.0F);
 		this.gridLayout.setColumns(1);
-		this.gridLayout.setRows(2);
+		this.gridLayout.setRows(3);
 		this.horizontalLayout.setWidth(100, Unit.PERCENTAGE);
 		this.horizontalLayout.setHeight(100, Unit.PIXELS);
 		this.gridLayout.addComponent(this.horizontalLayout, 0, 0);
-		this.table.setSizeFull();
-		this.gridLayout.addComponent(this.table, 0, 1);
+		this.tblDriverTask.setSizeFull();
+		this.gridLayout.addComponent(this.tblDriverTask, 0, 1);
+		this.horizontalLayout2.setSizeFull();
+		this.gridLayout.addComponent(this.horizontalLayout2, 0, 2);
+		this.gridLayout.setColumnExpandRatio(0, 10.0F);
 		this.gridLayout.setRowExpandRatio(1, 100.0F);
+		this.gridLayout.setRowExpandRatio(2, 12.0F);
 		this.gridLayout.setSizeFull();
 		this.setContent(this.gridLayout);
 		this.setSizeFull();
+	
+		this.comboBox.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				driverDetail.this.comboBox_valueChange(event);
+			}
+		});
+		this.dateFrom.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				driverDetail.this.dateFrom_valueChange(event);
+			}
+		});
+		this.dateUntil.addValueChangeListener(new Property.ValueChangeListener() {
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				driverDetail.this.dateUntil_valueChange(event);
+			}
+		});
 	} // </generated-code>
 
 	// <generated-code name="variables">
-	private XdevTable<Fahrerauftrag> table;
-	private XdevHorizontalLayout horizontalLayout;
-	private XdevPopupDateField popupDateField, popupDateField2;
-	private XdevComboBox<?> comboBox;
+	private XdevButton button;
+	private XdevTable<Fahrerauftrag> tblDriverTask;
+	private XdevHorizontalLayout horizontalLayout, horizontalLayout2;
+	private XdevPopupDateField dateFrom, dateUntil, popupDateField3, popupDateField2;
 	private XdevGridLayout gridLayout;
+	private XdevTextField textField2, textField;
+	private XdevComboBox<Fahrer> comboBox;
 	// </generated-code>
 
 }

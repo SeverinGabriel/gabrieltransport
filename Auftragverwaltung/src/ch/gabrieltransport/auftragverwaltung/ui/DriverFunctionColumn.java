@@ -1,18 +1,19 @@
 
 package ch.gabrieltransport.auftragverwaltung.ui;
 
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktionmap;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.xdev.ui.entitycomponent.table.XdevTable;
+
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerfunktion;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerfunktionmap;
 
 public class DriverFunctionColumn implements ColumnGenerator {
 
@@ -29,13 +30,15 @@ public class DriverFunctionColumn implements ColumnGenerator {
 				function.add(description);
 			}
 		}
+		function = function.stream().map(s-> s.substring(0, 1).toUpperCase()).collect(Collectors.toList());;
 		Optional<String> fahrerF =  fahrerFunction.stream().sorted(Comparator.reverseOrder())
 														   .map(s -> s.replaceFirst("^Fahrer", ""))
 							   							   .findFirst();
-		
-		function.add(fahrerF.get());
-
-		return function.stream().sorted().reduce((s,t) -> s + ", " + t).get();
+		if(fahrerF.isPresent()){
+			function.add(fahrerF.get());
+		}
+		Optional<String> fahrerFConcat = function.stream().sorted().reduce((s,t) -> s + ", " + t);
+		return (fahrerFConcat.isPresent()) ? fahrerFConcat.get() : "";
 	}
 
 	@SuppressWarnings("unchecked")

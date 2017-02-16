@@ -16,8 +16,8 @@ import com.xdev.ui.XdevPanel;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
@@ -88,7 +88,12 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 		double workMinuteCounter = 0;
 		final FahrerauftragDAO auftragServiceFacade = new FahrerauftragDAO();
 		List<Fahrerauftrag> auftraege = auftragServiceFacade.findAuftrageon(getDateForDay(), getBean());
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("<table>");
+				
 		for(Fahrerauftrag auftrag: auftraege){
+			sb.append("<tr><td>" + auftrag.getAuftrag().getBezeichung() + "</td></tr>");
 			LocalDateTime fromDate = auftrag.getVonDatum();
 			LocalDateTime untilDate = auftrag.getBisDatum();
 			
@@ -116,7 +121,10 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 			
 			
 		}
-		
+		sb.append("</table>");
+		if(!auftraege.isEmpty()){
+			panel.setDescription(sb.toString());
+		}
 		if(workHourCounter == 0){
 			panel.setStyleName("green");
 		}else if(workHourCounter <=4){
@@ -126,6 +134,7 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 		}else {
 			panel.setStyleName("red");
 		}
+		
 		
 	}
 	

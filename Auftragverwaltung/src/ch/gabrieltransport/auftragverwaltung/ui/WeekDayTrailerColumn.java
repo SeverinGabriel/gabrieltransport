@@ -23,9 +23,9 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayTrailerColumn extends XdevHorizontalLayout {
@@ -76,7 +76,10 @@ public class WeekDayTrailerColumn extends XdevHorizontalLayout {
 		double workMinuteCounter = 0;
 		final FahrzeugauftragDAO fahrzeugAuftragDAO = new FahrzeugauftragDAO();
 		List<Fahrzeugauftrag> auftraege = fahrzeugAuftragDAO.findAuftrageon(getDateForDay(), getBean());
+		StringBuilder sb = new StringBuilder();
+		sb.append("<table>");
 		for(Fahrzeugauftrag auftrag: auftraege){
+			sb.append("<tr><td>" + auftrag.getAuftrag().getBezeichung() + "</td></tr>");
 			LocalDateTime fromDate = auftrag.getVonDatum();
 			LocalDateTime untilDate = auftrag.getBisDatum();
 			
@@ -104,7 +107,10 @@ public class WeekDayTrailerColumn extends XdevHorizontalLayout {
 			
 			
 		}
-		
+		sb.append("</table>");
+		if(!auftraege.isEmpty()){
+			panel.setDescription(sb.toString());
+		}
 		if(workHourCounter == 0){
 			panel.setStyleName("green");
 		}else if(workHourCounter <=4){

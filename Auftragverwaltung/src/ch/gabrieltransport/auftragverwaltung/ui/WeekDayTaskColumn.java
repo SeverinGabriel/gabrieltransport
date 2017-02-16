@@ -20,8 +20,8 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
 import ch.gabrieltransport.auftragverwaltung.business.refresher.GuiListenerSingleton;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug;
+import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayTaskColumn extends XdevHorizontalLayout{
@@ -136,6 +136,7 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 		verticalLayout2.removeAllComponents();
 		final FahrzeugauftragDAO auftragServiceFacade = new FahrzeugauftragDAO();
 		List<Fahrzeugauftrag> auftraege = auftragServiceFacade.findAuftrageon(getDateForDay(), getBean());
+		
 		for(Fahrzeugauftrag auftrag: auftraege){
 			XdevButton auftragField = new XdevButton();
 			auftragField.setCaption(auftrag.getAuftrag().getBezeichung());
@@ -145,6 +146,10 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 			auftrag.getAuftrag().getFahrerauftrags().
 				forEach(s -> sb.append("<tr><td>" + s.getFahrer().getVorname() + 
 						"</td><td>"+ s.getFahrer().getNachname()+ "</td></tr>"));
+			if(auftrag.getAnhaenger() != null){
+				sb.append("<tr></tr>");
+				sb.append("<tr><td colspan='2'>Anhänger: " + auftrag.getAnhaenger().getNummer() + "</td></tr>");
+			}
 			sb.append("</table>");
 			
 			auftragField.setDescription(sb.toString());

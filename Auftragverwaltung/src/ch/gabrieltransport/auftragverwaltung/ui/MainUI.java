@@ -33,7 +33,7 @@ public class MainUI extends XdevUI implements BroadcastListener {
 	public void init(VaadinRequest request) {
 		this.initUI();
 		//this.setPollInterval(1000);
-		Broadcaster.register(this);
+		//Broadcaster.register(this);
 		view = new MainView();
 		this.navigator.addView("home", view);
 		UI.getCurrent().setPollInterval( 5000 );
