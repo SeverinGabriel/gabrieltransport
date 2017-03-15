@@ -5,6 +5,7 @@
 <?template NONE?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.LoginAuthView?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.MainView?>
+<?import ch.gabrieltransport.auftragverwaltung.ui.adminView?>
 <?import com.xdev.security.authorization.ui.XdevAuthorizationNavigator?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevUI?>
@@ -17,6 +18,7 @@
         <x:views>
             <entry path="" class="LoginAuthView" />
             <entry path="home" class="MainView" />
+            <entry path="admin" class="adminView" />
         </x:views>
     </XdevAuthorizationNavigator>
 </XdevUI>

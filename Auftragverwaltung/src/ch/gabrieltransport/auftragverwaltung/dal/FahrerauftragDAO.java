@@ -45,6 +45,27 @@ public class FahrerauftragDAO extends JPADAO<Fahrerauftrag, Integer> {
 		return auftraege;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Fahrerauftrag> findAuftragebetween(LocalDate ldFrom, LocalDate ldUntil, Fahrer driver) {
+		
+		LocalDateTime ldtFrom = LocalDateTime.of(ldFrom, LocalTime.MIN);
+		LocalDateTime ldtUntil = LocalDateTime.of(ldUntil, LocalTime.MAX);
+		
+		Session session = this.getSession(); 
+		String hql = "Select fa FROM Fahrerauftrag fa " + 
+				"where fa.fahrer = :fahrer and " + 
+				"((:dateFrom BETWEEN fa.vonDatum AND fa.bisDatum OR :dateUntil BETWEEN fa.vonDatum AND fa.bisDatum) " +
+				"OR (fa.vonDatum BETWEEN :dateFrom AND :dateUntil OR fa.bisDatum BETWEEN :dateFrom AND :dateUntil))"
+				+ " ORDER BY fa.vonDatum";
+		List<Fahrerauftrag> auftraege = session.createQuery(hql)
+				.setParameter("fahrer", driver)
+				.setParameter("dateFrom", ldtFrom)
+				.setParameter("dateUntil", ldtUntil)
+				.list();
+		return auftraege;
+	}
+	
+	
 	public void deleteAuftragbyID(int taskID){
 		Session session = this.getSession(); 
 		String hql = "DELETE FROM Fahrerauftrag fa WHERE fa.auftrag.idAuftrag = :id";

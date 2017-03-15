@@ -5,7 +5,7 @@
 <?template NONE?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
-<?import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug?>
 <?import com.xdev.ui.XdevAbsoluteLayout?>
 <?import com.xdev.ui.XdevButton?>
 <?import com.xdev.ui.XdevCheckBox?>

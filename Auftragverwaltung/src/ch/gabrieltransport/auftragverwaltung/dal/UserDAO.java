@@ -9,7 +9,7 @@ import ch.gabrieltransport.auftragverwaltung.entities.User;
  * 
  * @see User
  */
-public class UserDAO extends JPADAO<User, String> {
+public class UserDAO extends JPADAO<User, Integer> {
 	public UserDAO() {
 		super(User.class);
 	}

@@ -11,9 +11,9 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerfunktion;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerfunktionmap;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktionmap;
 
 public class DriverFunctionColumn implements ColumnGenerator {
 

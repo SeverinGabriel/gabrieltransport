@@ -1,6 +1,10 @@
 package ch.gabrieltransport.auftragverwaltung.entities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,8 +31,10 @@ public class Fahrer implements java.io.Serializable {
 	private int idfahrer;
 	private String nachname;
 	private String vorname;
+	private String name;
 	private String telefon;
 	private Set<Fahrerfunktionmap> fahrerfunktionmaps = new HashSet<Fahrerfunktionmap>(0);
+	private Map<String, List<Fahrerauftrag>> auftraege = new HashMap<String, List<Fahrerauftrag>>();
 
 	public Fahrer() {
 	}
@@ -77,6 +83,16 @@ public class Fahrer implements java.io.Serializable {
 	public void setVorname(String vorname) {
 		this.vorname = vorname;
 	}
+	
+	@Caption("Name")
+	@Column(name = "Name", nullable = false, columnDefinition = "VARCHAR", length = 90)
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	@Caption("Telefon")
 	@Column(name = "Telefon", columnDefinition = "VARCHAR", length = 45)
@@ -97,5 +113,24 @@ public class Fahrer implements java.io.Serializable {
 	public void setFahrerfunktionmaps(Set<Fahrerfunktionmap> fahrerfunktionmaps) {
 		this.fahrerfunktionmaps = fahrerfunktionmaps;
 	}
+	
+	public void setAuftrag(String tag, Fahrerauftrag fa){
+		List<Fahrerauftrag> faList = auftraege.get(tag);
+		if(faList != null){
+			faList.add(fa);
+		}else{
+			List<Fahrerauftrag> faListNew = new ArrayList<Fahrerauftrag>();
+			faListNew.add(fa);
+			auftraege.put(tag, faListNew);
+		}
+	}
+	
+	public void removeTasks(){
+		for(List<Fahrerauftrag> faList : auftraege.values()){
+			faList.clear();
+		}
+		
+	}
+	
 
 }

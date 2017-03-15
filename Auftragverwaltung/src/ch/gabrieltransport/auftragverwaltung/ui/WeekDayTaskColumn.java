@@ -20,8 +20,8 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
 import ch.gabrieltransport.auftragverwaltung.business.refresher.GuiListenerSingleton;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayTaskColumn extends XdevHorizontalLayout{
@@ -154,6 +154,18 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 			
 			auftragField.setDescription(sb.toString());
 			auftragField.addStyleName("borderless");
+			if(auftrag.getGarage()){
+				auftragField.setStyleName("garage");
+			}
+			if(auftrag.getUmzug()){
+				if(auftrag.getMoebellift()){
+					auftragField.setStyleName("moebellift");
+				}
+				else{
+					auftragField.setStyleName("umzug");
+				}
+			}
+			
 			auftragField.setSizeFull();
 			auftragField.addClickListener(new ClickListener() {
 				
@@ -165,7 +177,8 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 					win.center();
 					
 					win.setModal(true);
-					taskDetail taskWindow = new taskDetail(auftrag,
+					Fahrzeugauftrag test = auftragServiceFacade.find(auftrag.getIdfahrzeugauftrag());
+					taskDetail taskWindow = new taskDetail(test,
 							   new taskDetail.Callback() {
 							      public void onDialogResult(boolean result) {
 							    	  update();

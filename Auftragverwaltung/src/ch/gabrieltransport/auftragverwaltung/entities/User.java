@@ -3,7 +3,18 @@ package ch.gabrieltransport.auftragverwaltung.entities;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import ch.gabrieltransport.auftragverwaltung.dal.UserDAO;
+import com.xdev.dal.DAO;
+import com.xdev.security.authentication.CredentialsUsernamePassword;
+import com.xdev.security.authorization.jpa.AuthorizationRole;
+import com.xdev.security.authorization.jpa.AuthorizationSubject;
+import com.xdev.util.Caption;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,15 +22,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.xdev.dal.DAO;
-import com.xdev.security.authentication.CredentialsUsernamePassword;
-import com.xdev.security.authorization.jpa.AuthorizationRole;
-import com.xdev.security.authorization.jpa.AuthorizationSubject;
-import com.xdev.util.Caption;
-
-import ch.gabrieltransport.auftragverwaltung.dal.UserDAO;
 
 /**
  * User
@@ -28,11 +32,13 @@ import ch.gabrieltransport.auftragverwaltung.dal.UserDAO;
 @Caption("{%username}")
 @Entity
 @Table(name = "user", catalog = "gabrieltransport")
-public class User implements java.io.Serializable, AuthorizationSubject, CredentialsUsernamePassword {
+public class User implements java.io.Serializable, AuthorizationSubject, CredentialsUsernamePassword{
 
-	private String username;
+	private int iduser;
 	private byte[] password;
+	private String username;
 	private Set<Role> roles = new HashSet<Role>(0);
+	private Set<Log> logs = new HashSet<Log>(0);
 
 	public User() {
 	}
@@ -42,26 +48,28 @@ public class User implements java.io.Serializable, AuthorizationSubject, Credent
 		this.password = password;
 	}
 
-	public User(String username, byte[] password, Set<Role> roles) {
+	public User(String username, byte[] password, Set<Role> roles, Set<Log> logs) {
 		this.username = username;
 		this.password = password;
 		this.roles = roles;
+		this.logs = logs;
 	}
 
-	@Caption("Username")
+	@Caption("Iduser")
 	@Id
+	@GeneratedValue(strategy = IDENTITY)
 
-	@Column(name = "username", unique = true, nullable = false)
-	public String getUsername() {
-		return this.username;
+	@Column(name = "iduser", unique = true, nullable = false, columnDefinition = "INT")
+	public int getIduser() {
+		return this.iduser;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setIduser(int iduser) {
+		this.iduser = iduser;
 	}
 
 	@Caption("Password")
-	@Column(name = "password", nullable = false)
+	@Column(name = "password", nullable = false, columnDefinition = "TINYBLOB")
 	public byte[] getPassword() {
 		return this.password;
 	}
@@ -70,6 +78,26 @@ public class User implements java.io.Serializable, AuthorizationSubject, Credent
 		this.password = password;
 	}
 
+	@Caption("Username")
+	@Column(name = "username", unique = true, nullable = false, columnDefinition = "VARCHAR")
+	public String getUsername() {
+		return this.username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	@Caption("Logs")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+	public Set<Log> getLogs() {
+		return this.logs;
+	}
+
+	public void setLogs(Set<Log> logs) {
+		this.logs = logs;
+	}
+	
 	@Caption("Roles")
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "userrolenm", catalog = "gabrieltransport", joinColumns = {
@@ -92,7 +120,7 @@ public class User implements java.io.Serializable, AuthorizationSubject, Credent
 	public Collection<? extends AuthorizationRole> roles() {
 		return this.getRoles();
 	}
-
+	
 	@Override
 	public String username() {
 		return this.getUsername();

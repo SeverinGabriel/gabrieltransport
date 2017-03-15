@@ -45,12 +45,12 @@ import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug_;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Auftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 
 public class taskDetail extends XdevView {
 
@@ -106,6 +106,7 @@ public class taskDetail extends XdevView {
 			}
 			//cmbTrailer.select(auftrag.getAnhaenger());
 		}
+		loadCheckboxFields();
 		
 	}
 	public taskDetail(LocalDateTime ldt, Fahrzeug fz, Callback callback) {
@@ -118,6 +119,23 @@ public class taskDetail extends XdevView {
 		cmbVehicle.select(fz.getIdfahrzeug());
 	}
 	
+	
+	private void loadCheckboxFields(){
+		if(fahrzeugAuftrag.getUmzug() != null){
+			chkUmzug.setValue(fahrzeugAuftrag.getUmzug());
+		}
+		if(fahrzeugAuftrag.getGarage() != null){
+			chkGarage.setValue(fahrzeugAuftrag.getGarage());
+		}
+		if(fahrzeugAuftrag.getMoebellift() != null){
+			chkLift.setValue(fahrzeugAuftrag.getMoebellift());
+		}
+	}
+	private void saveCheckboxFields(Fahrzeugauftrag fa){
+		fa.setGarage(chkGarage.getValue());
+		fa.setMoebellift(chkLift.getValue());
+		fa.setUmzug(chkUmzug.getValue());
+	}
 	public void initTrailer(Fahrzeug fz){
 		cmbTrailer.removeAllItems();
 		if(fz.getAnhaenger()){
@@ -220,6 +238,7 @@ public class taskDetail extends XdevView {
 				}else{
 					fa.setAnhaenger(null);
 				}
+				saveCheckboxFields(fa);
 			}
 			
 			if(currentTask.getIdAuftrag() == 0){

@@ -65,7 +65,7 @@
 		</repository>
 	</repositories>
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>com.xdev-software</groupId>
 			<artifactId>xdev-server-core</artifactId>

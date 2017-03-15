@@ -2,6 +2,8 @@ package ch.gabrieltransport.auftragverwaltung.entities;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,6 +35,7 @@ public class Fahrerauftrag implements java.io.Serializable {
 	private Fahrer fahrer;
 	private LocalDateTime vonDatum;
 	private LocalDateTime bisDatum;
+	private Boolean ferien;
 
 	public Fahrerauftrag() {
 	}
@@ -97,6 +100,16 @@ public class Fahrerauftrag implements java.io.Serializable {
 
 	public void setBisDatum(LocalDateTime bisDatum) {
 		this.bisDatum = bisDatum;
+	}
+	
+	@Caption("Ferien")
+	@Column(name = "ferien", columnDefinition = "BIT")
+	public Boolean getFerien() {
+		return this.ferien;
+	}
+
+	public void setFerien(Boolean ferien) {
+		this.ferien = ferien;
 	}
 
 }

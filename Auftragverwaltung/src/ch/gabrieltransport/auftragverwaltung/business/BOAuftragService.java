@@ -8,16 +8,14 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 
 import ch.gabrieltransport.auftragverwaltung.dal.AuftragDAO;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 
 public class BOAuftragService {
 
 	private final AuftragDAO auftragDAO = new AuftragDAO();
-	private final BOFahrerAuftragService fahrerAuftragService = new BOFahrerAuftragService();
-	private final BOFahrzeugAuftragService fahrzeugAuftragService = new BOFahrzeugAuftragService();
 	public final void saveBestellung(Auftrag auftrag) {
 		auftragDAO.save(auftrag);
     }

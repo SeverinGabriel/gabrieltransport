@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
-import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
+import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 
 public class BOFahrzeugAuftragService {

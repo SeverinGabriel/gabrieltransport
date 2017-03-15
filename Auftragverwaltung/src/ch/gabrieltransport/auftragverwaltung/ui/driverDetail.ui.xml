@@ -5,7 +5,7 @@
 <?template BROWSER_WSXGA?>
 <?import?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
-<?import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag?>
 <?import com.xdev.ui.XdevButton?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevHorizontalLayout?>
@@ -43,10 +43,10 @@
         </XdevHorizontalLayout>
         <XdevTable x:name="tblDriverTask" x:entity="Fahrerauftrag" x:autoQuery="false">
             <x:entityProperties>
-                <entry type="String" property="auftrag.bezeichung" caption="Bezeichnung" />
+                <entry type="String" property="auftrag.bezeichung" caption="Auftrag" />
                 <entry type="LocalDateTime" property="vonDatum" caption="Von" />
                 <entry type="LocalDateTime" property="bisDatum" caption="Bis" />
-                <entry type="" property="delete" caption=" " generator="ch.gabrieltransport.auftragverwaltung.ui.DriverTaskDeleteColumn.Generator" />
+                <entry type="" property="generated" caption=" " generator="ch.gabrieltransport.auftragverwaltung.ui.DriverTaskDeleteColumn.Generator" />
             </x:entityProperties>
             <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="0.1" width="100%" height="100%" />
             <x:typeArguments>
@@ -55,20 +55,21 @@
         </XdevTable>
         <XdevHorizontalLayout caption="Ferien erfassen" x:name="horizontalLayout2" margin="">
             <x:constraints gridx="1" gridy="3" weighty="0.12" weightx="0.1" width="100%" height="100%" />
-            <XdevPopupDateField caption="von" x:name="popupDateField3">
+            <XdevPopupDateField caption="von" x:name="holidayDateFrom">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
             </XdevPopupDateField>
-            <XdevTextField columns="5" caption="Zeit von (hh:mm)" x:name="textField2" value="00:00">
+            <XdevTextField columns="5" caption="Zeit von (hh:mm)" x:name="txtTimeFrom" value="00:00">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
             </XdevTextField>
-            <XdevPopupDateField caption="bis" x:name="popupDateField2">
+            <XdevPopupDateField caption="bis" x:name="holidayDateUntil">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
             </XdevPopupDateField>
-            <XdevTextField columns="5" caption="Zeit bis (hh:mm)" x:name="textField" value="00:00">
+            <XdevTextField columns="5" caption="Zeit bis (hh:mm)" x:name="txtTimeUntil" value="00:00">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
             </XdevTextField>
             <XdevButton caption="Erfassen" x:name="button">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+                <x:event>click.buttonClick</x:event>
             </XdevButton>
         </XdevHorizontalLayout>
     </XdevGridLayout>

@@ -110,7 +110,7 @@ public class Auftrag implements java.io.Serializable {
 	}
 
 	@Caption("Fahrerauftrags")
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "auftrag", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "auftrag", orphanRemoval = true)
 	public Set<Fahrerauftrag> getFahrerauftrags() {
 		return this.fahrerauftrags;
 	}

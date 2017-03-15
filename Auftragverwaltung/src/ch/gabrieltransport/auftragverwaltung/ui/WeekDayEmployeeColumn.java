@@ -16,8 +16,8 @@ import com.xdev.ui.XdevPanel;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
@@ -85,6 +85,7 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 	public void update() {
 		LocalDateTime currentDate = getDateForDay();
 		double workHourCounter = 0;
+		boolean holiday = false;
 		double workMinuteCounter = 0;
 		final FahrerauftragDAO auftragServiceFacade = new FahrerauftragDAO();
 		List<Fahrerauftrag> auftraege = auftragServiceFacade.findAuftrageon(getDateForDay(), getBean());
@@ -103,36 +104,41 @@ public class WeekDayEmployeeColumn extends XdevHorizontalLayout {
 			if (untilDate.isAfter(currentDate.plusHours(24))){
 				untilDate = currentDate.plusHours(18);
 			}
-			
-			if(fromDate.getHour() == 0 || untilDate.getHour() == 0){
-				workHourCounter += 8;
-			}else{
-				long hours = fromDate.until( untilDate, ChronoUnit.HOURS);
-				fromDate = fromDate.plusHours( hours );
-				workHourCounter += hours;
-				
-				long minutes = fromDate.until( untilDate, ChronoUnit.MINUTES);
-				workMinuteCounter += minutes;
-				if (workMinuteCounter >= 60){
-					workMinuteCounter -= 60;
-					workHourCounter ++;
+			if(auftrag.getFerien() == null || !auftrag.getFerien()){
+				if(fromDate.getHour() == 0 || untilDate.getHour() == 0){
+					workHourCounter += 8;
+				}else{
+					long hours = fromDate.until( untilDate, ChronoUnit.HOURS);
+					fromDate = fromDate.plusHours( hours );
+					workHourCounter += hours;
+					
+					long minutes = fromDate.until( untilDate, ChronoUnit.MINUTES);
+					workMinuteCounter += minutes;
+					if (workMinuteCounter >= 60){
+						workMinuteCounter -= 60;
+						workHourCounter ++;
+					}
 				}
-			}
-			
-			
+			}else{
+				holiday = true;
+			}			
 		}
 		sb.append("</table>");
 		if(!auftraege.isEmpty()){
 			panel.setDescription(sb.toString());
 		}
-		if(workHourCounter == 0){
-			panel.setStyleName("green");
-		}else if(workHourCounter <=4){
-			panel.setStyleName("yellow");
-		}else if(workHourCounter <=7){
-			panel.setStyleName("orange");
-		}else {
-			panel.setStyleName("red");
+		if(!holiday){
+			if(workHourCounter == 0){
+				panel.setStyleName("green");
+			}else if(workHourCounter <=4){
+				panel.setStyleName("yellow");
+			}else if(workHourCounter <=7){
+				panel.setStyleName("orange");
+			}else {
+				panel.setStyleName("red");
+			}
+		}else{
+			panel.setStyleName("blue");
 		}
 		
 		

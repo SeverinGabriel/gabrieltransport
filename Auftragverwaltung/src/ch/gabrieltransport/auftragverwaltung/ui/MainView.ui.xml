@@ -7,7 +7,7 @@
 <?import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
 <?import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion?>
-<?import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeug?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug?>
 <?import com.xdev.ui.XdevButton?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevHorizontalLayout?>
@@ -26,19 +26,42 @@
     <XdevGridLayout x:name="gridLayout">
         <x:constraints zpos="0" width="100%" height="100%" />
         <XdevHorizontalLayout x:name="horizontalLayout" margin="">
-            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="1.0" width="195px" alignment="MIDDLE_CENTER" height="40px" />
-            <XdevButton icon="FontAwesome.CARET_LEFT" caption="" x:name="button">
-                <x:constraints weightx="0.0" />
-                <x:event>click.buttonClick</x:event>
-            </XdevButton>
-            <XdevButton caption="" styleName="borderless" x:name="btnWeek">
-                <x:constraints weightx="0.0" />
-                <x:event>click.buttonClick</x:event>
-            </XdevButton>
-            <XdevButton icon="FontAwesome.CARET_RIGHT" caption="" x:name="button2">
-                <x:constraints weightx="0.0" />
-                <x:event>click.buttonClick</x:event>
-            </XdevButton>
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="1.0" width="100%" alignment="MIDDLE_CENTER" height="40px" />
+            <XdevHorizontalLayout x:name="horizontalLayout6">
+                <x:constraints weightx="0.2" width="100%" height="40px" />
+            </XdevHorizontalLayout>
+            <XdevHorizontalLayout x:name="horizontalLayout5" margin="l">
+                <x:constraints weightx="1.0" width="20%" alignment="TOP_CENTER" height="40px" />
+                <XdevButton icon="FontAwesome.CARET_LEFT" caption="" x:name="button">
+                    <x:constraints weightx="0.0" alignment="TOP_CENTER" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton caption="" styleName="borderless" x:name="btnWeek">
+                    <x:constraints weightx="0.0" alignment="TOP_CENTER" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton icon="FontAwesome.CARET_RIGHT" caption="" x:name="button2">
+                    <x:constraints weightx="0.0" alignment="TOP_CENTER" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+            </XdevHorizontalLayout>
+            <XdevHorizontalLayout x:name="horizontalLayout7" margin="">
+                <x:constraints weightx="0.3" width="100%" height="40px" />
+                <XdevLabel x:name="lblLegend" value="Legende">
+                    <x:constraints weightx="0.0" />
+                </XdevLabel>
+                <XdevButton caption="Log" x:name="btnLog">
+                    <x:constraints weightx="0.0" />
+                    <x:subjectEvaluationExtension>
+                        <entry resource="ch.gabrieltransport.auftragverwaltung.business.AuthorizationResources.LOGFILE_READ" strategy="VISIBLE" />
+                    </x:subjectEvaluationExtension>
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton caption="Logout" x:name="btnLogout">
+                    <x:constraints gridHeight="1" gridx="1" gridy="1" weighty="0.0" weightx="0.0" alignment="MIDDLE_RIGHT" gridWidth="1" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+            </XdevHorizontalLayout>
         </XdevHorizontalLayout>
         <XdevHorizontalLayout x:name="horizontalLayout2" margin="">
             <x:constraints gridx="1" gridy="2" weighty="0.0" weightx="1.0" width="195px" alignment="MIDDLE_CENTER" height="29px" />
@@ -132,7 +155,7 @@
                     <x:entityProperties>
                         <entry type="int" property="nummer" caption="#" width="50" />
                         <entry type="String" property="kennzeichen" caption="Kennzeichen" width="100" />
-                        <entry type="int" property="nutzlast" caption="Nutzlast" width="75" />
+                        <entry type="Integer" property="nutzlast" caption="Nutzlast" width="75" />
                         <entry type="String" property="fahrzeugFunktion.beschreibung" caption="Funktion" width="90" />
                         <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
                         <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />

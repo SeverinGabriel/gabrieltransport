@@ -6,12 +6,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugDAO;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.xdev.dal.DAO;
 import com.xdev.util.Caption;
+
+import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugDAO;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**

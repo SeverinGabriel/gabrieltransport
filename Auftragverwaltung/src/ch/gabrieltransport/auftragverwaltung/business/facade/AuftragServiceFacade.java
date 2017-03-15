@@ -13,11 +13,12 @@ import com.google.common.collect.Sets;
 import ch.gabrieltransport.auftragverwaltung.business.BOAuftragService;
 import ch.gabrieltransport.auftragverwaltung.business.BOFahrerAuftragService;
 import ch.gabrieltransport.auftragverwaltung.business.BOFahrzeugAuftragService;
+import ch.gabrieltransport.auftragverwaltung.business.BOLogService;
 import ch.gabrieltransport.auftragverwaltung.dal.AuftragDAO;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 
 public class AuftragServiceFacade {
@@ -26,12 +27,15 @@ public class AuftragServiceFacade {
 	private BOAuftragService boAuftragService = new BOAuftragService();
 	private BOFahrzeugAuftragService boFzAService = new BOFahrzeugAuftragService();
 	private BOFahrerAuftragService boFaAService = new BOFahrerAuftragService();
+	private BOLogService boLogService = new BOLogService();
+	
 	
 	@Transactional
 	public void deleteAuftrag(Auftrag auftrag){
 		try{
 	    	
 	    	boAuftragService.deleteAuftrag(auftrag);
+	    	boLogService.logMessage("Auftrag " + auftrag.getBezeichung() + " gelöscht");
 	    	
 		}catch(Exception e){
 			System.err.println(e.getMessage());
@@ -44,6 +48,10 @@ public class AuftragServiceFacade {
 		try{
 	    	linkTasks(auftrag, fahrzeugauftraege, fahrer);
 	    	boAuftragService.persistAuftrag(auftrag);
+	    	for(Fahrerauftrag fa: fahrer){
+	    		boFaAService.persistFahrerAuftrag(fa);
+	    	}
+	    	boLogService.logMessage("Auftrag " + auftrag.getBezeichung() + " erstellt");
 	    	
 		}catch(Exception e){
 			System.err.println(e.getMessage());
@@ -55,9 +63,13 @@ public class AuftragServiceFacade {
 	public Auftrag mergeAuftrag(Auftrag auftrag, List<Fahrzeugauftrag> fahrzeugauftraege, List<Fahrerauftrag> fahrer){
 		try{	
 			deleteRelationsFromTask(auftrag);
+			for(Fahrerauftrag fa: fahrer){
+	    		boFaAService.persistFahrerAuftrag(fa);
+	    	}
 			linkTasks(auftrag, fahrzeugauftraege, fahrer);
-	    	return boAuftragService.mergeAuftrag(auftrag);
-	    	
+			boLogService.logMessage("Auftrag " + auftrag.getBezeichung() + " geändert");
+			return boAuftragService.mergeAuftrag(auftrag);
+			
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}

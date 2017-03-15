@@ -9,6 +9,7 @@ import com.xdev.security.authorization.ui.Authorization;
  * Central collection of all authorization resources used in the project.
  */
 public enum AuthorizationResources implements ResourceEnum<AuthorizationResources> {
+	LOG("LOG"), TEST("TEST"), LOGFILE_READ("LOGFILE_READ")
 	;
 
 	/**

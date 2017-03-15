@@ -16,7 +16,9 @@ import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.business.facade.FahrerAuftragServiceFacade;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
 
 public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
 
@@ -28,6 +30,7 @@ public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
 		}
 	}
 
+	private final FahrerAuftragServiceFacade faService = new FahrerAuftragServiceFacade();
 	private final Table customizedTable;
 	private final Object itemId;
 	private final Object columnId;
@@ -66,9 +69,10 @@ public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
 	 * @eventHandlerDelegate
 	 */
 	private void button_buttonClick(ClickEvent event) {
-		selectItem();
-		Notification.show("Clicked in line, id = " + getItemId());
+		faService.removeTask(getBean());
+		getTable().getContainerDataSource().removeItem(getBean());
 	}
+
 
 	/**
 	 * Event handler delegate method for the {@link XdevHorizontalLayout}.

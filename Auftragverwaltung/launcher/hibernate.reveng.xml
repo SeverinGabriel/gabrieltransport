@@ -10,13 +10,7 @@
         <sql-type jdbc-type="TINYINT" not-null="true" hibernate-type="short" />
         <sql-type jdbc-type="TINYINT" hibernate-type="java.lang.Short" />
     </type-mapping>
-    <table-filter match-catalog="gabrieltransport" match-name="fahrzeug_funktion" />
-    <table-filter match-catalog="gabrieltransport" match-name="fahrzeug" />
-    <table-filter match-catalog="gabrieltransport" match-name="anhaenger" />
-    <table-filter match-catalog="gabrieltransport" match-name="anhaengertyp" />
-    <table catalog="gabrieltransport" name="fahrzeug_funktion" class="ch.gabrieltransport.auftragverwaltung.entities.FahrzeugFunktion" />
-    <table catalog="gabrieltransport" name="fahrzeug" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug" />
-    <table catalog="gabrieltransport" name="anhaenger" class="ch.gabrieltransport.auftragverwaltung.entities.Anhaenger" />
-    <table catalog="gabrieltransport" name="anhaengertyp" class="ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp" />
+    <table-filter match-catalog="gabrieltransport" match-name="fahrzeugauftrag" />
+    <table catalog="gabrieltransport" name="fahrzeugauftrag" class="ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag" />
 </hibernate-reverse-engineering>
 

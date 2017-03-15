@@ -1,12 +1,13 @@
 
 package ch.gabrieltransport.auftragverwaltung.business;
 
-import ch.gabrieltransport.auftragverwaltung.entities.User;
 import com.xdev.security.authentication.Authenticator;
 import com.xdev.security.authentication.AuthenticatorProvider;
 import com.xdev.security.authentication.CredentialsUsernamePassword;
 import com.xdev.security.authentication.jpa.JPAAuthenticator;
 import com.xdev.security.authentication.jpa.HashStrategy.SHA2;
+
+import ch.gabrieltransport.auftragverwaltung.entities.User;
 
 public class GabrielAuthenticatorProvider implements AuthenticatorProvider<CredentialsUsernamePassword, CredentialsUsernamePassword> {
 	private static GabrielAuthenticatorProvider INSTANCE;

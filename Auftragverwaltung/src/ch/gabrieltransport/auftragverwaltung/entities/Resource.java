@@ -1,8 +1,5 @@
 package ch.gabrieltransport.auftragverwaltung.entities;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,53 +11,35 @@ import javax.persistence.Table;
 
 import com.xdev.dal.DAO;
 import com.xdev.security.authorization.jpa.AuthorizationResource;
-import com.xdev.util.Caption;
-
+import java.util.Set;
 import ch.gabrieltransport.auftragverwaltung.dal.ResourceDAO;
 
-/**
- * Resource
- */
-@DAO(daoClass = ResourceDAO.class)
-@Caption("{%name}")
 @Entity
-@Table(name = "resource", catalog = "gabrieltransport")
-public class Resource implements java.io.Serializable, AuthorizationResource {
+@DAO(daoClass = ResourceDAO.class)
+@Table(name = "`RESOURCE`")
+public class Resource implements AuthorizationResource {
 
 	private String name;
-	private Set<Role> roles = new HashSet<Role>(0);
+	private Set<Role> roles;
 
 	public Resource() {
+		super();
 	}
 
-	public Resource(String name) {
-		this.name = name;
-	}
-
-	public Resource(String name, Set<Role> roles) {
-		this.name = name;
-		this.roles = roles;
-	}
-
-	@Caption("Name")
 	@Id
-
-	@Column(name = "name", unique = true, nullable = false)
+	@Column(name = "`NAME`", unique = true, nullable = false)
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	@Caption("Roles")
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "roleresourcenm", catalog = "gabrieltransport", joinColumns = {
-			@JoinColumn(name = "resource", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "role", nullable = false, updatable = false) })
+	@JoinTable(name = "ROLERESOURCENM", joinColumns = @JoinColumn(name = "`RESOURCE`", nullable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "`ROLE`", nullable = false, updatable = false))
 	public Set<Role> getRoles() {
-		return this.roles;
+		return roles;
 	}
 
 	public void setRoles(Set<Role> roles) {

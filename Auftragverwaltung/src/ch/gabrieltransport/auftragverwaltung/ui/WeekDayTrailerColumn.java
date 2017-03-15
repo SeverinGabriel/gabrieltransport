@@ -23,9 +23,9 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrerauftrag;
-import ch.gabrieltransport.auftragverwaltung.entities.mysql.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 
 public class WeekDayTrailerColumn extends XdevHorizontalLayout {
