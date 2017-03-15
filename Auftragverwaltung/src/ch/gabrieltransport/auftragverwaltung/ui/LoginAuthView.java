@@ -20,7 +20,6 @@ import com.xdev.ui.XdevView;
 
 import ch.gabrieltransport.auftragverwaltung.business.GabrielAuthenticatorProvider;
 import ch.gabrieltransport.auftragverwaltung.business.GabrielAuthorizationProvider;
-import ch.gabrieltransport.auftragverwaltung.business.GabrielSQLAuthorizationProvider;
 
 public class LoginAuthView extends XdevView implements com.xdev.security.authentication.ui.LoginView {
 
