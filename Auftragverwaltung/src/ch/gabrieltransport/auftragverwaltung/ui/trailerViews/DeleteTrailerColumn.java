@@ -1,11 +1,12 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews;
+package ch.gabrieltransport.auftragverwaltung.ui.trailerViews;
 
+import ch.gabrieltransport.auftragverwaltung.business.facade.FahrzeugServiceFacade;
+import ch.gabrieltransport.auftragverwaltung.business.facade.TrailerServiceFacade;
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
+import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugDAO;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
-import ch.gabrieltransport.auftragverwaltung.ui.taskDetail;
-
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.server.FontAwesome;
@@ -16,27 +17,27 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-public class EditFahrzeugColumn extends XdevHorizontalLayout {
+public class DeleteTrailerColumn extends XdevHorizontalLayout {
 
 	public static class Generator implements ColumnGenerator {
 		@Override
 		public Object generateCell(Table table, Object itemId, Object columnId) {
 
-			return new EditFahrzeugColumn(table, itemId, columnId);
+			return new DeleteTrailerColumn(table, itemId, columnId);
 		}
 	}
 
 	private final Table customizedTable;
 	private final Object itemId;
 	private final Object columnId;
+	private TrailerServiceFacade trailerFacade = new TrailerServiceFacade();
 
-	private EditFahrzeugColumn(Table customizedTable, Object itemId, Object columnId) {
+	private DeleteTrailerColumn(Table customizedTable, Object itemId, Object columnId) {
 		super();
 
 		this.customizedTable = customizedTable;
@@ -59,8 +60,8 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Fahrzeug getBean() {
-		return ((XdevTable<Fahrzeug>) getTable()).getBeanItem(getItemId()).getBean();
+	public Anhaenger getBean() {
+		return ((XdevTable<Anhaenger>) getTable()).getBeanItem(getItemId()).getBean();
 	}
 
 	/**
@@ -71,19 +72,9 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 	 */
 	private void button_buttonClick(ClickEvent event) {
 		selectItem();
-		Window win = new Window();
-		win.setWidth("600");
-		win.setHeight("600");
-		win.center();
-		
-		win.setModal(true);
-		FahrzeugDetail vehicleView = new FahrzeugDetail(this.getBean(), new FahrzeugDetail.Callback() {
-		      public void onDialogResult(Fahrzeug result) {
-		    	  getTable().refreshRowCache();
-		      }
-		});
-		win.setContent(vehicleView);
-		getUI().addWindow(win);
+		trailerFacade.deleteTrailer(getBean());
+		getTable().getContainerDataSource().removeItem(getBean());
+		Broadcaster.broadcast("TRAILER");
 	}
 
 	/**
@@ -110,7 +101,7 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 	
 		this.setSpacing(false);
 		this.setMargin(new MarginInfo(false));
-		this.button.setIcon(FontAwesome.PENCIL);
+		this.button.setIcon(FontAwesome.REMOVE);
 		this.button.setCaption("");
 	
 		this.button.setSizeUndefined();

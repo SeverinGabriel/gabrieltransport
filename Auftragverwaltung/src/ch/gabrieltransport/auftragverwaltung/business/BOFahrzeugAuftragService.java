@@ -25,4 +25,11 @@ public class BOFahrzeugAuftragService {
 			fahrzeugAuftragDAO.remove(fzA);
 		}
 	}
+	
+	public void deleteAllOfVehicle(Fahrzeug vehicle){
+		List<Fahrzeugauftrag> tasksToDelete = fahrzeugAuftragDAO.findAllByVehicle(vehicle);
+		for (Fahrzeugauftrag fahrzeugauftrag : tasksToDelete) {
+			fahrzeugAuftragDAO.remove(fahrzeugauftrag);
+		}
+	}
 }

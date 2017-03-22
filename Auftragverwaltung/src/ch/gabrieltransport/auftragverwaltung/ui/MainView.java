@@ -83,7 +83,7 @@ import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeCol
 import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn;
 import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn;
 import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverFunctionColumn;
-import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.driverDetail;
+import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverTaskDetail;
 
 public class MainView extends XdevView implements BroadcastListener, com.vaadin.server.ClientConnector.DetachListener {
 
@@ -99,8 +99,17 @@ public class MainView extends XdevView implements BroadcastListener, com.vaadin.
 		this.initUI();
 		Broadcaster.register(this);
 		updateLabels();
-		tblEmployee.getBeanContainerDataSource().addAll(new FahrerDAO().findAll());
 		fillLegend();	
+		tblTask.setSortContainerPropertyId("nummer");
+		tblTask.setSortAscending(true);
+		tblTask.sort();
+		tblTrailer.setSortContainerPropertyId("nummer");
+		tblTrailer.setSortAscending(true);
+		tblTrailer.sort();
+		tblEmployee.setSortContainerPropertyId("name");
+		tblEmployee.setSortAscending(true);
+		tblEmployee.sort();
+		//tblEmployee.sort(new String[] { "Nachname" , "Vorname"}, new boolean[] { true, true });
 }
 	
 
@@ -275,7 +284,7 @@ public class MainView extends XdevView implements BroadcastListener, com.vaadin.
 	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
 	 */
 	private void tblEmployee_itemClick(ItemClickEvent event) {
-		driverDetail driverWindow = new driverDetail(
+		DriverTaskDetail driverWindow = new DriverTaskDetail(
 				((BeanItem<Fahrer>)event.getItem()).getBean(), 
 				currWeek.getCurrentWeek().getStartDate());
 		Window win = new Window();
@@ -296,6 +305,15 @@ public class MainView extends XdevView implements BroadcastListener, com.vaadin.
 		}
 		if (message.equalsIgnoreCase("DRIVER")){
 			tblEmployee.refreshRowCache();
+			tblEmployee.sort();
+		}
+		if (message.equalsIgnoreCase("VEHICLE")){
+			tblTask.refreshRowCache();
+			tblTask.sort();
+		}
+		if (message.equalsIgnoreCase("TRAILER")){
+			tblTask.refreshRowCache();
+			tblTask.sort();
 		}
 		
 	}
@@ -388,7 +406,6 @@ private void initUI() {
 	this.horizontalLayout6.setMargin(new MarginInfo(false));
 	this.btnAccount.setCaption("Passwort ändern");
 	this.btnAdmin.setCaption("Admin");
-	this.btnAdmin.setVisible(false);
 	this.horizontalLayout5.setMargin(new MarginInfo(false, false, false, true));
 	this.button.setIcon(FontAwesome.CARET_LEFT);
 	this.button.setCaption("");
@@ -411,8 +428,9 @@ private void initUI() {
 	this.horizontalLayout4.setMargin(new MarginInfo(false));
 	this.comboBox.setContainerDataSource(Fahrerfunktion.class);
 	this.tblEmployee.setPageLength(20);
+	this.tblEmployee.setColumnCollapsingAllowed(true);
 	this.tblEmployee.setResponsive(true);
-	this.tblEmployee.setContainerDataSource(Fahrer.class, false);
+	this.tblEmployee.setContainerDataSource(Fahrer.class);
 	this.tblEmployee.addGeneratedColumn("Funktion", new DriverFunctionColumn());
 	this.tblEmployee.addGeneratedColumn("Montag", new WeekDayEmployeeColumn.Generator());
 	this.tblEmployee.addGeneratedColumn("Dienstag", new WeekDayEmployeeColumn.Generator());
@@ -510,6 +528,8 @@ private void initUI() {
 	this.tblTask.setColumnHeader("Sonntag", "Sonntag");
 	this.tblTask.setColumnExpandRatio("Sonntag", 0.05F);
 
+	Authorization.setSubjectEvaluatingComponentExtension(this.btnAdmin, SubjectEvaluatingComponentExtension.Builder
+			.New().add(AuthorizationResources.ADMINPAGE.resource(), SubjectEvaluationStrategy.VISIBLE).build());
 	Authorization.setSubjectEvaluatingComponentExtension(this.btnLog, SubjectEvaluatingComponentExtension.Builder.New()
 			.add(AuthorizationResources.LOGFILE_READ.resource(), SubjectEvaluationStrategy.VISIBLE).build());
 

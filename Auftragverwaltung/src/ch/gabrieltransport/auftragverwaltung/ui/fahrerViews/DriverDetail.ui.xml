@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?template BROWSER_WSXGA?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
+<?import com.xdev.ui.XdevButton?>
+<?import com.xdev.ui.XdevFieldGroup?>
+<?import com.xdev.ui.XdevGridLayout?>
+<?import com.xdev.ui.XdevHorizontalLayout?>
+<?import com.xdev.ui.XdevLabel?>
+<?import com.xdev.ui.XdevTextField?>
+<?import com.xdev.ui.XdevView?>
+<XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="DriverDetail">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <XdevGridLayout x:name="gridLayout">
+        <x:constraints zpos="0" width="100%" height="100%" />
+        <XdevGridLayout x:name="form">
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" />
+            <XdevFieldGroup x:name="fieldGroup" x:entityType="Fahrer">
+                <x:typeArguments>
+                    <typeArgument type="Fahrer" />
+                </x:typeArguments>
+                <x:fields>
+                    <entry name="txtNachname" property="nachname" />
+                    <entry name="txtVorname" property="vorname" />
+                    <entry name="txtName" property="name" />
+                    <entry name="txtTelefon" property="telefon" />
+                </x:fields>
+            </XdevFieldGroup>
+            <XdevLabel x:name="lblNachname" value="Nachname">
+                <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.0" />
+            </XdevLabel>
+            <XdevTextField columns="5" tabIndex="1" x:name="txtNachname">
+                <x:constraints gridx="2" gridy="1" weighty="0.0" weightx="0.0" />
+                <x:event>textChange.textChange</x:event>
+            </XdevTextField>
+            <XdevLabel x:name="lblVorname" value="Vorname">
+                <x:constraints gridx="1" gridy="2" weighty="0.0" weightx="0.0" />
+            </XdevLabel>
+            <XdevTextField columns="5" tabIndex="2" x:name="txtVorname">
+                <x:constraints gridx="2" gridy="2" weighty="0.0" weightx="0.0" />
+                <x:event>textChange.textChange</x:event>
+            </XdevTextField>
+            <XdevLabel x:name="lblName" value="Name">
+                <x:constraints gridx="1" gridy="3" weighty="0.0" weightx="0.0" />
+            </XdevLabel>
+            <XdevTextField columns="5" tabIndex="3" x:name="txtName">
+                <x:constraints gridx="2" gridy="3" weighty="0.0" weightx="0.0" />
+            </XdevTextField>
+            <XdevLabel x:name="lblTelefon" value="Telefon">
+                <x:constraints gridx="1" gridy="4" weighty="0.0" weightx="0.0" />
+            </XdevLabel>
+            <XdevTextField columns="5" tabIndex="4" x:name="txtTelefon">
+                <x:constraints gridx="2" gridy="4" weighty="0.0" weightx="0.0" />
+            </XdevTextField>
+            <XdevHorizontalLayout x:name="horizontalLayout" margin="">
+                <x:constraints gridx="1" gridy="5" weighty="0.0" weightx="0.0" alignment="TOP_RIGHT" gridWidth="2" />
+                <XdevButton caption="Abbrechen" tabIndex="6" x:name="cmdReturn">
+                    <x:constraints weightx="0.0" alignment="MIDDLE_LEFT" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton caption="Speichern" tabIndex="7" x:name="cmdSave">
+                    <x:constraints weightx="0.0" alignment="MIDDLE_LEFT" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+            </XdevHorizontalLayout>
+        </XdevGridLayout>
+    </XdevGridLayout>
+</XdevView>
+

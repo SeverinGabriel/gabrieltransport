@@ -43,7 +43,7 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import com.xdev.ui.masterdetail.MasterDetail;
 import com.xdev.ui.util.NestedProperty;
 
-public class driverDetail extends XdevView {
+public class DriverTaskDetail extends XdevView {
 
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 	FahrerauftragDAO faDAO = new FahrerauftragDAO();
@@ -51,7 +51,7 @@ public class driverDetail extends XdevView {
 	/**
 	 * 
 	 */
-	public driverDetail(Fahrer driver, LocalDateTime weekStart) {
+	public DriverTaskDetail(Fahrer driver, LocalDateTime weekStart) {
 		super();
 		this.initUI();
 		dateFrom.setValue(Date.from(weekStart.atZone(ZoneId.systemDefault()).toInstant()));
@@ -83,7 +83,6 @@ public class driverDetail extends XdevView {
 					tblDriverTask.getBeanContainerDataSource().addAll(tasks);
 				}
 			}
-			
 		}
 	}
 
@@ -190,7 +189,7 @@ public class driverDetail extends XdevView {
 		this.tblDriverTask.setColumnHeader("auftrag.bezeichung", "Auftrag");
 		this.tblDriverTask.setColumnHeader("vonDatum", "Von");
 		this.tblDriverTask.setColumnHeader("bisDatum", "Bis");
-		this.tblDriverTask.setColumnHeader("generated", " ");
+		this.tblDriverTask.setColumnHeader("generated", "  ");
 		this.horizontalLayout2.setCaption("Abwesenheit erfassen");
 		this.horizontalLayout2.setMargin(new MarginInfo(false));
 		this.cmbAbsence.setRequired(true);
@@ -261,19 +260,19 @@ public class driverDetail extends XdevView {
 		this.comboBox.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
-				driverDetail.this.comboBox_valueChange(event);
+				DriverTaskDetail.this.comboBox_valueChange(event);
 			}
 		});
 		this.dateFrom.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
-				driverDetail.this.dateFrom_valueChange(event);
+				DriverTaskDetail.this.dateFrom_valueChange(event);
 			}
 		});
 		this.dateUntil.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
-				driverDetail.this.dateUntil_valueChange(event);
+				DriverTaskDetail.this.dateUntil_valueChange(event);
 			}
 		});
 		this.button.addClickListener(event -> this.button_buttonClick(event));

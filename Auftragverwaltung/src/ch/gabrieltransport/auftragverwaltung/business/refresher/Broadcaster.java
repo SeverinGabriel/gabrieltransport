@@ -13,6 +13,12 @@ import java.util.concurrent.Executors;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Used to notify different clients when changes happen. MainView registeres itself to get messages. 
+ * To prevent non-reachable Views they are removed after 30 minutes. The user gets a message that the data are no longer synchronized
+ * @author Severin
+ *
+ */
 public class Broadcaster implements Serializable{
 	
 	static ExecutorService executorService =

@@ -33,8 +33,11 @@
                     <x:constraints weightx="0.0" />
                     <x:event>click.buttonClick</x:event>
                 </XdevButton>
-                <XdevButton caption="Admin" x:name="btnAdmin" visible="false">
+                <XdevButton caption="Admin" x:name="btnAdmin">
                     <x:constraints weightx="0.0" />
+                    <x:subjectEvaluationExtension>
+                        <entry resource="ch.gabrieltransport.auftragverwaltung.business.AuthorizationResources.ADMINPAGE" strategy="VISIBLE" />
+                    </x:subjectEvaluationExtension>
                     <x:event>click.buttonClick</x:event>
                 </XdevButton>
             </XdevHorizontalLayout>
@@ -104,7 +107,7 @@
                                 <x:constraints gridHeight="1" gridx="2" gridy="1" weighty="0.0" weightx="0.2" width="100%" alignment="MIDDLE_RIGHT" gridWidth="1" height="100%" />
                             </XdevContainerFilterComponent>
                         </XdevHorizontalLayout>
-                        <XdevTable x:name="tblEmployee" pageLength="20" x:entity="Fahrer" x:autoQuery="false" responsive="true">
+                        <XdevTable x:name="tblEmployee" pageLength="20" columnCollapsingAllowed="true" x:entity="Fahrer" responsive="true">
                             <x:entityProperties>
                                 <entry type="String" property="vorname" caption="Vorname" width="110" />
                                 <entry type="String" property="nachname" caption="Nachname" width="110" />

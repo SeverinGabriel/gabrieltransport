@@ -1,7 +1,8 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews;
+package ch.gabrieltransport.auftragverwaltung.ui.trailerViews;
 
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.taskDetail;
@@ -22,13 +23,13 @@ import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-public class EditFahrzeugColumn extends XdevHorizontalLayout {
+public class EditTrailerColumn extends XdevHorizontalLayout {
 
 	public static class Generator implements ColumnGenerator {
 		@Override
 		public Object generateCell(Table table, Object itemId, Object columnId) {
 
-			return new EditFahrzeugColumn(table, itemId, columnId);
+			return new EditTrailerColumn(table, itemId, columnId);
 		}
 	}
 
@@ -36,7 +37,7 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 	private final Object itemId;
 	private final Object columnId;
 
-	private EditFahrzeugColumn(Table customizedTable, Object itemId, Object columnId) {
+	private EditTrailerColumn(Table customizedTable, Object itemId, Object columnId) {
 		super();
 
 		this.customizedTable = customizedTable;
@@ -59,8 +60,8 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Fahrzeug getBean() {
-		return ((XdevTable<Fahrzeug>) getTable()).getBeanItem(getItemId()).getBean();
+	public Anhaenger getBean() {
+		return ((XdevTable<Anhaenger>) getTable()).getBeanItem(getItemId()).getBean();
 	}
 
 	/**
@@ -77,12 +78,12 @@ public class EditFahrzeugColumn extends XdevHorizontalLayout {
 		win.center();
 		
 		win.setModal(true);
-		FahrzeugDetail vehicleView = new FahrzeugDetail(this.getBean(), new FahrzeugDetail.Callback() {
-		      public void onDialogResult(Fahrzeug result) {
+		TrailerDetail trailerView = new TrailerDetail(this.getBean(), new TrailerDetail.Callback() {
+		      public void onDialogResult(Anhaenger result) {
 		    	  getTable().refreshRowCache();
 		      }
 		});
-		win.setContent(vehicleView);
+		win.setContent(trailerView);
 		getUI().addWindow(win);
 	}
 

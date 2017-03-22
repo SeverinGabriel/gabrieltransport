@@ -1,6 +1,9 @@
 
 package ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews;
 
+import ch.gabrieltransport.auftragverwaltung.business.facade.FahrzeugServiceFacade;
+import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
+import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -30,6 +33,7 @@ public class DeleteFahrzeugColumn extends XdevHorizontalLayout {
 	private final Table customizedTable;
 	private final Object itemId;
 	private final Object columnId;
+	private FahrzeugServiceFacade vehicleFacade = new FahrzeugServiceFacade();
 
 	private DeleteFahrzeugColumn(Table customizedTable, Object itemId, Object columnId) {
 		super();
@@ -66,7 +70,9 @@ public class DeleteFahrzeugColumn extends XdevHorizontalLayout {
 	 */
 	private void button_buttonClick(ClickEvent event) {
 		selectItem();
-		Notification.show("Clicked in line, id = " + getItemId());
+		vehicleFacade.deleteVehicle(getBean());
+		getTable().getContainerDataSource().removeItem(getBean());
+		Broadcaster.broadcast("VEHICLE");
 	}
 
 	/**

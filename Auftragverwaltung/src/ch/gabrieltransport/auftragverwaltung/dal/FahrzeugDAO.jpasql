@@ -1,0 +1,4 @@
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug
+findAllOrderNumber(){
+	select * from Fahrzeug order by Fahrzeug.nummer
+}

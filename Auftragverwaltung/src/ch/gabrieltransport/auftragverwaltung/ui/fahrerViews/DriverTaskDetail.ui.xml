@@ -46,7 +46,7 @@
                 <entry type="String" property="auftrag.bezeichung" caption="Auftrag" />
                 <entry type="LocalDateTime" property="vonDatum" caption="Von" />
                 <entry type="LocalDateTime" property="bisDatum" caption="Bis" />
-                <entry type="" property="generated" caption=" " generator="ch.gabrieltransport.auftragverwaltung.ui.DriverTaskDeleteColumn.Generator" />
+                <entry type="" property="generated" caption="  " generator="ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverTaskDeleteColumn.Generator" />
             </x:entityProperties>
             <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="0.1" width="100%" height="100%" />
             <x:typeArguments>

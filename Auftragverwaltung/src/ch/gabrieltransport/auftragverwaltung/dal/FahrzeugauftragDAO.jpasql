@@ -1,7 +1,12 @@
 import java.time.LocalDateTime
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug
 findTasksBetween(LocalDateTime fromDate, LocalDateTime untilDate){
 	select * from Fahrzeugauftrag as fa 
    	where ((:fromDate between fa.vonDatum and fa.bisDatum or :fromDate between fa.vonDatum and fa.bisDatum) 
 	or (fa.vonDatum between :fromDate and :untilDate or fa.bisDatum between :fromDate and :untilDate))
+}
+
+findAllByVehicle(Fahrzeug fz){
+	select * from Fahrzeugauftrag as fa where fa.fahrzeug = :fz
 }

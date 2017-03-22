@@ -20,11 +20,21 @@ public class FahrerAuftragServiceFacade {
 	private AuftragDAO auftragDAO = new AuftragDAO();
 	private BOLogService boLogService = new BOLogService();
 
+	/**
+	 * Persist holiday for personal
+	 * @param start LocalDateTime of holiday start
+	 * @param end LocalDateTime of holiday end
+	 * @param driver employee for which the holiday is persisted 
+	 * @param type type of absence - defaults are Ferien, Militär, Kompensation, Krank but can be any String
+	 * @return Persisted Fahrerauftrag
+	 */
 	@Transactional
 	public Fahrerauftrag persistHoliday(LocalDateTime start, LocalDateTime end, Fahrer driver, String type){
+		//Get task that collects all absences of type "type"
 		List<Auftrag> a = auftragDAO.findByBezeichnung(type);
 		Auftrag task;
 		if (a.isEmpty()){
+			//Never used keyword before. Persist new task
 			task = new Auftrag(type);
 			auftragDAO.persist(task);
 		}
@@ -32,6 +42,7 @@ public class FahrerAuftragServiceFacade {
 			task = a.get(0);
 		}
 		if (task != null){
+			//Save new employeeTask
 			Fahrerauftrag fa = new Fahrerauftrag(task, driver, start, end);
 			fa.setFerien(true);
 			fahrerAuftragDAO.persist(fa);
@@ -41,6 +52,10 @@ public class FahrerAuftragServiceFacade {
 		return null;
 	}
 	
+	/**
+	 * Remove single Employeetask. Message is displayed if task has no employee left
+	 * @param fa task to remove
+	 */
 	@Transactional
 	public void removeTask(Fahrerauftrag fa){
 		try{

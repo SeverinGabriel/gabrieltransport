@@ -1,0 +1,5 @@
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrer
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag
+findAllByEmployee(Fahrer employee){
+	select * from Fahrerauftrag as fa where fa.fahrer = :employee
+}

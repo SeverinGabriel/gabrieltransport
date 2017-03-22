@@ -1,5 +1,10 @@
 import ch.gabrieltransport.auftragverwaltung.entities.Log
+import java.time.LocalDateTime
 findLog()
 {
    select * from Log order by logtime desc limit 50
+}
+
+findLogsOlderThan(LocalDateTime date){
+	select * from Log where Log.logtime < :date
 }

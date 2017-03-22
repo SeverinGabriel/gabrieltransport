@@ -1,8 +1,10 @@
-package ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews;
+package ch.gabrieltransport.auftragverwaltung.ui.trailerViews;
 
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
 import ch.gabrieltransport.auftragverwaltung.dal.AnhaengertypDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugFunktionDAO;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger_;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
@@ -28,38 +30,37 @@ import com.xdev.ui.XdevTextField;
 import com.xdev.ui.XdevView;
 import com.xdev.ui.entitycomponent.combobox.XdevComboBox;
 
-public class FahrzeugDetail extends XdevView {
+public class TrailerDetail extends XdevView {
 
 	public static class Callback{
-		public void onDialogResult(Fahrzeug result){}
+		public void onDialogResult(Anhaenger result){}
 	}
 	private Callback callback;
 	/**
 	 * 
 	 */
-	public FahrzeugDetail(Callback callback) {
+	public TrailerDetail(Callback callback) {
 		super();
 		this.initUI();
-		Fahrzeug vehicle = new Fahrzeug();
-		vehicle.setAnhaenger(true);
-		this.fieldGroup.setItemDataSource(vehicle);
+		Anhaenger trailer = new Anhaenger();
+		this.fieldGroup.setItemDataSource(trailer);
 		this.callback = callback;
 	}
 	
-	public FahrzeugDetail(Fahrzeug vehicle, Callback callback) {
+	public TrailerDetail(Anhaenger trailer, Callback callback) {
 		super();
 		this.initUI();
-		this.fieldGroup.setItemDataSource(vehicle);
+		this.fieldGroup.setItemDataSource(trailer);
 		this.callback = callback;
 	}
 
 	/**
-	 * Event handler delegate method for the {@link XdevButton} {@link #cmdBack}.
+	 * Event handler delegate method for the {@link XdevButton} {@link #cmdReset}.
 	 *
 	 * @see Button.ClickListener#buttonClick(Button.ClickEvent)
 	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
 	 */
-	private void cmdBack_buttonClick(Button.ClickEvent event) {
+	private void cmdReset_buttonClick(Button.ClickEvent event) {
 		((Window)this.getParent()).close();
 	}
 
@@ -71,24 +72,8 @@ public class FahrzeugDetail extends XdevView {
 	 */
 	private void cmdSave_buttonClick(Button.ClickEvent event) {
 		callback.onDialogResult(this.fieldGroup.save());
-		Broadcaster.broadcast("VEHICLE");
+		Broadcaster.broadcast("TRAILER");
 		((Window)this.getParent()).close();
-	}
-
-	/**
-	 * Event handler delegate method for the {@link XdevCheckBox}
-	 * {@link #chkAnhaenger}.
-	 *
-	 * @see Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
-	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
-	 */
-	private void chkAnhaenger_valueChange(Property.ValueChangeEvent event) {
-		lblAnhaengertyp.setVisible(chkAnhaenger.getValue());
-		cmbAnhaengertyp.setVisible(chkAnhaenger.getValue());
-		if (!chkAnhaenger.getValue()){
-			cmbAnhaengertyp.select(null);
-		}
-			
 	}
 
 	/*
@@ -105,16 +90,14 @@ public class FahrzeugDetail extends XdevView {
 		this.txtKennzeichen = new XdevTextField();
 		this.lblNutzlast = new XdevLabel();
 		this.txtNutzlast = new XdevTextField();
-		this.lblFahrzeugFunktion = new XdevLabel();
-		this.cmbFahrzeugFunktion = new XdevComboBox<>();
-		this.lblAnhaenger = new XdevLabel();
-		this.chkAnhaenger = new XdevCheckBox();
 		this.lblAnhaengertyp = new XdevLabel();
 		this.cmbAnhaengertyp = new XdevComboBox<>();
+		this.lblFahrzeugFunktion = new XdevLabel();
+		this.cmbFahrzeugFunktion = new XdevComboBox<>();
 		this.horizontalLayout = new XdevHorizontalLayout();
-		this.cmdBack = new XdevButton();
+		this.cmdReset = new XdevButton();
 		this.cmdSave = new XdevButton();
-		this.fieldGroup = new XdevFieldGroup<>(Fahrzeug.class);
+		this.fieldGroup = new XdevFieldGroup<>(Anhaenger.class);
 	
 		this.lblNummer.setValue("Nummer");
 		this.txtNummer.setColumns(5);
@@ -125,39 +108,34 @@ public class FahrzeugDetail extends XdevView {
 		this.lblNutzlast.setValue("Nutzlast");
 		this.txtNutzlast.setColumns(5);
 		this.txtNutzlast.setTabIndex(3);
+		this.lblAnhaengertyp.setValue("Anhaengertyp");
+		this.cmbAnhaengertyp.setTabIndex(4);
+		this.cmbAnhaengertyp.setContainerDataSource(Anhaengertyp.class, DAOs.get(AnhaengertypDAO.class).findAll());
+		this.cmbAnhaengertyp.setItemCaptionPropertyId(Anhaengertyp_.beschreibung.getName());
 		this.lblFahrzeugFunktion.setValue("FahrzeugFunktion");
-		this.cmbFahrzeugFunktion.setTabIndex(4);
+		this.cmbFahrzeugFunktion.setTabIndex(5);
 		this.cmbFahrzeugFunktion.setContainerDataSource(FahrzeugFunktion.class,
 				DAOs.get(FahrzeugFunktionDAO.class).findAll());
 		this.cmbFahrzeugFunktion.setItemCaptionPropertyId(FahrzeugFunktion_.beschreibung.getName());
-		this.lblAnhaenger.setValue("Anhaenger");
-		this.chkAnhaenger.setCaption("");
-		this.chkAnhaenger.setTabIndex(6);
-		this.chkAnhaenger.setImmediate(true);
-		this.lblAnhaengertyp.setValue("Anhaengertyp");
-		this.cmbAnhaengertyp.setTabIndex(5);
-		this.cmbAnhaengertyp.setContainerDataSource(Anhaengertyp.class, DAOs.get(AnhaengertypDAO.class).findAll());
-		this.cmbAnhaengertyp.setItemCaptionPropertyId(Anhaengertyp_.beschreibung.getName());
 		this.horizontalLayout.setMargin(new MarginInfo(false));
-		this.cmdBack.setCaption("Abbrechen");
-		this.cmdBack.setTabIndex(8);
-		this.cmdSave.setCaption("Speichern");
-		this.cmdSave.setTabIndex(9);
-		this.fieldGroup.bind(this.txtNummer, Fahrzeug_.nummer.getName());
-		this.fieldGroup.bind(this.txtKennzeichen, Fahrzeug_.kennzeichen.getName());
-		this.fieldGroup.bind(this.txtNutzlast, Fahrzeug_.nutzlast.getName());
-		this.fieldGroup.bind(this.cmbFahrzeugFunktion, Fahrzeug_.fahrzeugFunktion.getName());
-		this.fieldGroup.bind(this.cmbAnhaengertyp, Fahrzeug_.anhaengertyp.getName());
-		this.fieldGroup.bind(this.chkAnhaenger, Fahrzeug_.anhaenger.getName());
+		this.cmdReset.setCaption("Reset");
+		this.cmdReset.setTabIndex(6);
+		this.cmdSave.setCaption("Save");
+		this.cmdSave.setTabIndex(7);
+		this.fieldGroup.bind(this.txtNummer, Anhaenger_.nummer.getName());
+		this.fieldGroup.bind(this.txtKennzeichen, Anhaenger_.kennzeichen.getName());
+		this.fieldGroup.bind(this.txtNutzlast, Anhaenger_.nutzlast.getName());
+		this.fieldGroup.bind(this.cmbAnhaengertyp, Anhaenger_.anhaengertyp.getName());
+		this.fieldGroup.bind(this.cmbFahrzeugFunktion, Anhaenger_.fahrzeugFunktion.getName());
 	
-		this.cmdBack.setSizeUndefined();
-		this.horizontalLayout.addComponent(this.cmdBack);
-		this.horizontalLayout.setComponentAlignment(this.cmdBack, Alignment.MIDDLE_LEFT);
+		this.cmdReset.setSizeUndefined();
+		this.horizontalLayout.addComponent(this.cmdReset);
+		this.horizontalLayout.setComponentAlignment(this.cmdReset, Alignment.MIDDLE_LEFT);
 		this.cmdSave.setSizeUndefined();
 		this.horizontalLayout.addComponent(this.cmdSave);
 		this.horizontalLayout.setComponentAlignment(this.cmdSave, Alignment.MIDDLE_LEFT);
 		this.form.setColumns(2);
-		this.form.setRows(7);
+		this.form.setRows(6);
 		this.lblNummer.setSizeUndefined();
 		this.form.addComponent(this.lblNummer, 0, 0);
 		this.txtNummer.setSizeUndefined();
@@ -170,20 +148,16 @@ public class FahrzeugDetail extends XdevView {
 		this.form.addComponent(this.lblNutzlast, 0, 2);
 		this.txtNutzlast.setSizeUndefined();
 		this.form.addComponent(this.txtNutzlast, 1, 2);
-		this.lblFahrzeugFunktion.setSizeUndefined();
-		this.form.addComponent(this.lblFahrzeugFunktion, 0, 3);
-		this.cmbFahrzeugFunktion.setSizeUndefined();
-		this.form.addComponent(this.cmbFahrzeugFunktion, 1, 3);
-		this.lblAnhaenger.setSizeUndefined();
-		this.form.addComponent(this.lblAnhaenger, 0, 4);
-		this.chkAnhaenger.setSizeUndefined();
-		this.form.addComponent(this.chkAnhaenger, 1, 4);
 		this.lblAnhaengertyp.setSizeUndefined();
-		this.form.addComponent(this.lblAnhaengertyp, 0, 5);
+		this.form.addComponent(this.lblAnhaengertyp, 0, 3);
 		this.cmbAnhaengertyp.setSizeUndefined();
-		this.form.addComponent(this.cmbAnhaengertyp, 1, 5);
+		this.form.addComponent(this.cmbAnhaengertyp, 1, 3);
+		this.lblFahrzeugFunktion.setSizeUndefined();
+		this.form.addComponent(this.lblFahrzeugFunktion, 0, 4);
+		this.cmbFahrzeugFunktion.setSizeUndefined();
+		this.form.addComponent(this.cmbFahrzeugFunktion, 1, 4);
 		this.horizontalLayout.setSizeUndefined();
-		this.form.addComponent(this.horizontalLayout, 0, 6);
+		this.form.addComponent(this.horizontalLayout, 0, 5, 1, 5);
 		this.form.setComponentAlignment(this.horizontalLayout, Alignment.TOP_RIGHT);
 		this.gridLayout.setColumns(2);
 		this.gridLayout.setRows(2);
@@ -201,25 +175,18 @@ public class FahrzeugDetail extends XdevView {
 		this.setContent(this.gridLayout);
 		this.setSizeFull();
 	
-		this.chkAnhaenger.addValueChangeListener(new Property.ValueChangeListener() {
-			@Override
-			public void valueChange(Property.ValueChangeEvent event) {
-				FahrzeugDetail.this.chkAnhaenger_valueChange(event);
-			}
-		});
-		this.cmdBack.addClickListener(event -> this.cmdBack_buttonClick(event));
+		this.cmdReset.addClickListener(event -> this.cmdReset_buttonClick(event));
 		this.cmdSave.addClickListener(event -> this.cmdSave_buttonClick(event));
 	} // </generated-code>
 
 	// <generated-code name="variables">
-	private XdevLabel lblNummer, lblKennzeichen, lblNutzlast, lblFahrzeugFunktion, lblAnhaengertyp, lblAnhaenger;
-	private XdevButton cmdBack, cmdSave;
+	private XdevLabel lblNummer, lblKennzeichen, lblNutzlast, lblAnhaengertyp, lblFahrzeugFunktion;
+	private XdevButton cmdReset, cmdSave;
 	private XdevComboBox<Anhaengertyp> cmbAnhaengertyp;
 	private XdevHorizontalLayout horizontalLayout;
-	private XdevCheckBox chkAnhaenger;
+	private XdevFieldGroup<Anhaenger> fieldGroup;
 	private XdevGridLayout gridLayout, form;
 	private XdevTextField txtNummer, txtKennzeichen, txtNutzlast;
-	private XdevFieldGroup<Fahrzeug> fieldGroup;
 	private XdevComboBox<FahrzeugFunktion> cmbFahrzeugFunktion;
 	// </generated-code>
 
