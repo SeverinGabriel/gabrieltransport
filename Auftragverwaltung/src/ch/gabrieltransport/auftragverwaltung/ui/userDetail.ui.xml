@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?template BROWSER_WSXGA?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.User?>
+<?import com.xdev.ui.XdevButton?>
+<?import com.xdev.ui.XdevFieldGroup?>
+<?import com.xdev.ui.XdevGridLayout?>
+<?import com.xdev.ui.XdevHorizontalLayout?>
+<?import com.xdev.ui.XdevLabel?>
+<?import com.xdev.ui.XdevPasswordField?>
+<?import com.xdev.ui.XdevTextField?>
+<?import com.xdev.ui.XdevView?>
+<XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="userDetail">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <XdevGridLayout x:name="gridLayout">
+        <x:constraints zpos="0" width="100%" height="100%" />
+        <XdevGridLayout x:name="form">
+            <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.1" width="500px" />
+            <XdevHorizontalLayout x:name="horizontalLayout2" margin="tb">
+                <x:constraints gridx="2" gridy="4" weighty="0.0" weightx="0.3" width="100%" height="50px" />
+                <XdevButton caption="Abbrechen" x:name="btnReturn">
+                    <x:constraints gridHeight="1" gridx="2" gridy="4" weighty="0.0" weightx="0.0" alignment="TOP_LEFT" gridWidth="1" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton caption="Save" x:name="cmdSave">
+                    <x:constraints weightx="0.0" alignment="TOP_CENTER" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+            </XdevHorizontalLayout>
+            <XdevFieldGroup x:name="fieldGroup" x:entityType="User">
+                <x:typeArguments>
+                    <typeArgument type="User" />
+                </x:typeArguments>
+                <x:fields>
+                    <entry name="txtUsername" property="username" />
+                </x:fields>
+            </XdevFieldGroup>
+            <XdevLabel x:name="lblUsername" value="Username">
+                <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="0.1" />
+            </XdevLabel>
+            <XdevTextField columns="5" tabIndex="1" x:name="txtUsername" readOnly="true">
+                <x:constraints gridx="2" gridy="1" weighty="0.0" weightx="0.3" width="100%" />
+            </XdevTextField>
+            <XdevLabel x:name="lblPassword" value="Password">
+                <x:constraints gridx="1" gridy="2" weighty="0.0" weightx="0.1" />
+            </XdevLabel>
+            <XdevPasswordField columns="5" tabIndex="2" x:name="txtPassword">
+                <x:constraints gridx="2" gridy="2" weighty="0.0" weightx="0.3" width="100%" />
+            </XdevPasswordField>
+            <XdevLabel x:name="txtConfirmPassword" value="Password bestätigen">
+                <x:constraints gridx="1" gridy="3" weighty="0.0" weightx="0.1" />
+            </XdevLabel>
+            <XdevPasswordField columns="5" x:name="txtPassword2">
+                <x:constraints gridx="2" gridy="3" weighty="0.0" weightx="0.3" width="100%" />
+            </XdevPasswordField>
+        </XdevGridLayout>
+    </XdevGridLayout>
+</XdevView>
+

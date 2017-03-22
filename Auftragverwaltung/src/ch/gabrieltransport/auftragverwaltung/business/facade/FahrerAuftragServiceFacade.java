@@ -1,8 +1,11 @@
 package ch.gabrieltransport.auftragverwaltung.business.facade;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.transaction.Transactional;
+
+import com.vaadin.ui.Notification;
 
 import ch.gabrieltransport.auftragverwaltung.business.BOLogService;
 import ch.gabrieltransport.auftragverwaltung.dal.AuftragDAO;
@@ -18,13 +21,21 @@ public class FahrerAuftragServiceFacade {
 	private BOLogService boLogService = new BOLogService();
 
 	@Transactional
-	public Fahrerauftrag persistHoliday(LocalDateTime start, LocalDateTime end, Fahrer driver){
-		Auftrag a = auftragDAO.find(1);
-		if (a != null){
-			Fahrerauftrag fa = new Fahrerauftrag(a, driver, start, end);
+	public Fahrerauftrag persistHoliday(LocalDateTime start, LocalDateTime end, Fahrer driver, String type){
+		List<Auftrag> a = auftragDAO.findByBezeichnung(type);
+		Auftrag task;
+		if (a.isEmpty()){
+			task = new Auftrag(type);
+			auftragDAO.persist(task);
+		}
+		else{
+			task = a.get(0);
+		}
+		if (task != null){
+			Fahrerauftrag fa = new Fahrerauftrag(task, driver, start, end);
 			fa.setFerien(true);
 			fahrerAuftragDAO.persist(fa);
-			boLogService.logMessage("Ferien von " + driver.getVorname() + " " + driver.getNachname() + "erfasst");
+			boLogService.logMessage(type + " von " + driver.getVorname() + " " + driver.getNachname() + "erfasst");
 			return fa;
 		}
 		return null;
@@ -36,6 +47,13 @@ public class FahrerAuftragServiceFacade {
 			fahrerAuftragDAO.remove(fa);
 			fahrerAuftragDAO.flush();
 			boLogService.logMessage(fa.getFahrer().getVorname() + " " +  fa.getFahrer().getNachname()+ " von Auftrag " + fa.getAuftrag().getBezeichung()+  " entfernt");
+			if(!fa.getFerien()){
+				int countDriver = fa.getAuftrag().getFahrerauftrags().size();
+				if(countDriver <= 1){
+					Notification.show("Achtung der Auftrag " + fa.getAuftrag().getBezeichung() + " hat nun kein Personal zugewiesen", Notification.Type.WARNING_MESSAGE);
+				}
+			}
+			
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 			

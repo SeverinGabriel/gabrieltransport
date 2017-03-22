@@ -1,11 +1,13 @@
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.adminViews;
 
+import ch.gabrieltransport.auftragverwaltung.dal.LogDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Log;
 import ch.gabrieltransport.auftragverwaltung.entities.Log_;
 import ch.gabrieltransport.auftragverwaltung.entities.User_;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
+import com.xdev.dal.DAOs;
 import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevGridLayout;
 import com.xdev.ui.XdevView;
@@ -13,12 +15,12 @@ import com.xdev.ui.entitycomponent.table.XdevTable;
 import com.xdev.ui.navigation.Navigation;
 import com.xdev.ui.util.NestedProperty;
 
-public class adminView extends XdevView {
+public class logView extends XdevView {
 
 	/**
 	 * 
 	 */
-	public adminView() {
+	public logView() {
 		super();
 		this.initUI();
 	}
@@ -52,7 +54,8 @@ public class adminView extends XdevView {
 	
 		this.btnReturn.setCaption("Auftragsverwaltung");
 		this.table2.setPageLength(50);
-		this.table2.setContainerDataSource(Log.class);
+		this.table2.setSortAscending(false);
+		this.table2.setContainerDataSource(Log.class, DAOs.get(LogDAO.class).findLog());
 		this.table2.setVisibleColumns(Log_.logtime.getName(), Log_.logmessage.getName(), Log_.user.getName());
 		this.table2.setColumnHeader("logtime", "Logzeit");
 		this.table2.setColumnHeader("logmessage", "Nachricht");

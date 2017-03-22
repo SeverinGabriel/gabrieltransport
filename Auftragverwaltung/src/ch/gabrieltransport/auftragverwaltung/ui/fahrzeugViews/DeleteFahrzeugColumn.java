@@ -1,6 +1,7 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews;
 
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.server.FontAwesome;
@@ -16,26 +17,21 @@ import com.xdev.ui.XdevButton;
 import com.xdev.ui.XdevHorizontalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
-import ch.gabrieltransport.auftragverwaltung.business.facade.FahrerAuftragServiceFacade;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
-import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
-
-public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
+public class DeleteFahrzeugColumn extends XdevHorizontalLayout {
 
 	public static class Generator implements ColumnGenerator {
 		@Override
 		public Object generateCell(Table table, Object itemId, Object columnId) {
 
-			return new DriverTaskDeleteColumn(table, itemId, columnId);
+			return new DeleteFahrzeugColumn(table, itemId, columnId);
 		}
 	}
 
-	private final FahrerAuftragServiceFacade faService = new FahrerAuftragServiceFacade();
 	private final Table customizedTable;
 	private final Object itemId;
 	private final Object columnId;
 
-	private DriverTaskDeleteColumn(Table customizedTable, Object itemId, Object columnId) {
+	private DeleteFahrzeugColumn(Table customizedTable, Object itemId, Object columnId) {
 		super();
 
 		this.customizedTable = customizedTable;
@@ -58,8 +54,8 @@ public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Fahrerauftrag getBean() {
-		return ((XdevTable<Fahrerauftrag>) getTable()).getBeanItem(getItemId()).getBean();
+	public Fahrzeug getBean() {
+		return ((XdevTable<Fahrzeug>) getTable()).getBeanItem(getItemId()).getBean();
 	}
 
 	/**
@@ -69,10 +65,9 @@ public class DriverTaskDeleteColumn extends XdevHorizontalLayout {
 	 * @eventHandlerDelegate
 	 */
 	private void button_buttonClick(ClickEvent event) {
-		faService.removeTask(getBean());
-		getTable().getContainerDataSource().removeItem(getBean());
+		selectItem();
+		Notification.show("Clicked in line, id = " + getItemId());
 	}
-
 
 	/**
 	 * Event handler delegate method for the {@link XdevHorizontalLayout}.

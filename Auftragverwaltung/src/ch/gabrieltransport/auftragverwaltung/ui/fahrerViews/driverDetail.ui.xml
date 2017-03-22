@@ -53,8 +53,14 @@
                 <typeArgument type="Fahrerauftrag" />
             </x:typeArguments>
         </XdevTable>
-        <XdevHorizontalLayout caption="Ferien erfassen" x:name="horizontalLayout2" margin="">
+        <XdevHorizontalLayout caption="Abwesenheit erfassen" x:name="horizontalLayout2" margin="">
             <x:constraints gridx="1" gridy="3" weighty="0.12" weightx="0.1" width="100%" height="100%" />
+            <XdevComboBox required="true" x:name="cmbAbsence" filteringMode="com.vaadin.shared.ui.combobox.FilteringMode.OFF" nullSelectionAllowed="false" autoQueryData="false" newItemsAllowed="true" x:autoQuery="false">
+                <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
+                <x:typeArguments>
+                    <typeArgument type="String" />
+                </x:typeArguments>
+            </XdevComboBox>
             <XdevPopupDateField caption="von" x:name="holidayDateFrom">
                 <x:constraints weightx="0.0" alignment="BOTTOM_CENTER" />
             </XdevPopupDateField>

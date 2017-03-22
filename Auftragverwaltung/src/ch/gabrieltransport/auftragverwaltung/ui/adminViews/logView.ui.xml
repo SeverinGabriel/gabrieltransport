@@ -20,7 +20,7 @@
                 <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="1.0" />
                 <x:event>click.buttonClick</x:event>
             </XdevButton>
-            <XdevTable x:name="table2" pageLength="50" x:entity="Log">
+            <XdevTable x:name="table2" pageLength="50" x:entity="Log" sortAscending="false">
                 <x:entityProperties>
                     <entry type="LocalDateTime" property="logtime" caption="Logzeit" />
                     <entry type="String" property="logmessage" caption="Nachricht" />
@@ -30,6 +30,7 @@
                 <x:typeArguments>
                     <typeArgument type="Log" />
                 </x:typeArguments>
+                <x:data methodName="findLog" />
             </XdevTable>
         </XdevGridLayout>
     </XdevGridLayout>

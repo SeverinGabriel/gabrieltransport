@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<?xdevuiml version="1.0"?>
+<?template BROWSER_WUXGA?>
+<?import?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Anhaengertyp?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrer?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug?>
+<?import ch.gabrieltransport.auftragverwaltung.entities.FahrzeugFunktion?>
+<?import com.xdev.ui.XdevGridLayout?>
+<?import com.xdev.ui.XdevTabSheet?>
+<?import com.xdev.ui.XdevView?>
+<?import com.xdev.ui.entitycomponent.table.XdevTable?>
+<?import java.lang.Boolean?>
+<?import java.lang.Integer?>
+<?import java.lang.String?>
+<XdevView xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="adminView">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <XdevGridLayout x:name="gridLayout">
+        <x:constraints zpos="0" width="100%" height="100%" />
+        <XdevTabSheet styleName="framed" x:name="tabSheet" x:selectedTabIndex="1">
+            <x:constraints gridx="1" gridy="1" weighty="1.0" weightx="1.0" width="100%" height="100%" />
+            <XdevTable caption="Tab" x:name="table" x:entity="Fahrer" editable="true">
+                <x:entityProperties>
+                    <entry type="String" property="nachname" />
+                    <entry type="String" property="vorname" />
+                    <entry type="String" property="telefon" />
+                </x:entityProperties>
+                <x:constraints gridHeight="1" gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" alignment="TOP_LEFT" gridWidth="1" height="100%" />
+                <x:typeArguments>
+                    <typeArgument type="Fahrer" />
+                </x:typeArguments>
+            </XdevTable>
+            <XdevTable caption="Tab" x:name="table2" x:entity="Fahrzeug">
+                <x:entityProperties>
+                    <entry type="String" property="kennzeichen" />
+                    <entry type="Integer" property="nutzlast" />
+                    <entry type="int" property="nummer" />
+                    <entry type="Boolean" property="anhaenger" />
+                    <entry type="" property="generated2" generator="ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews.EditFahrzeugColumn.Generator" />
+                    <entry type="" property="generated" generator="ch.gabrieltransport.auftragverwaltung.ui.fahrzeugViews.DeleteFahrzeugColumn.Generator" />
+                </x:entityProperties>
+                <x:constraints gridHeight="1" gridx="1" gridy="1" weighty="1.0" weightx="1.0" width="100%" alignment="TOP_LEFT" gridWidth="1" height="100%" />
+                <x:typeArguments>
+                    <typeArgument type="Fahrzeug" />
+                </x:typeArguments>
+            </XdevTable>
+            <XdevTable caption="Tab" x:name="table3" x:entity="Anhaenger" editable="true">
+                <x:entityProperties>
+                    <entry type="String" property="kennzeichen" />
+                    <entry type="Anhaengertyp" property="anhaengertyp" />
+                    <entry type="FahrzeugFunktion" property="fahrzeugFunktion" />
+                    <entry type="int" property="nummer" />
+                    <entry type="Integer" property="nutzlast" />
+                </x:entityProperties>
+                <x:constraints width="100%" height="100%" />
+                <x:typeArguments>
+                    <typeArgument type="Anhaenger" />
+                </x:typeArguments>
+            </XdevTable>
+        </XdevTabSheet>
+    </XdevGridLayout>
+</XdevView>
+

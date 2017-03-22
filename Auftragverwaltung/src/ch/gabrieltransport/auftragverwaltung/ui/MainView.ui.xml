@@ -27,8 +27,16 @@
         <x:constraints zpos="0" width="100%" height="100%" />
         <XdevHorizontalLayout x:name="horizontalLayout" margin="">
             <x:constraints gridx="1" gridy="1" weighty="0.0" weightx="1.0" width="100%" alignment="MIDDLE_CENTER" height="40px" />
-            <XdevHorizontalLayout x:name="horizontalLayout6">
-                <x:constraints weightx="0.2" width="100%" height="40px" />
+            <XdevHorizontalLayout x:name="horizontalLayout6" margin="">
+                <x:constraints weightx="0.3" width="100%" alignment="TOP_CENTER" height="40px" />
+                <XdevButton caption="Passwort ändern" x:name="btnAccount">
+                    <x:constraints weightx="0.0" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
+                <XdevButton caption="Admin" x:name="btnAdmin" visible="false">
+                    <x:constraints weightx="0.0" />
+                    <x:event>click.buttonClick</x:event>
+                </XdevButton>
             </XdevHorizontalLayout>
             <XdevHorizontalLayout x:name="horizontalLayout5" margin="l">
                 <x:constraints weightx="1.0" width="20%" alignment="TOP_CENTER" height="40px" />
@@ -100,14 +108,14 @@
                             <x:entityProperties>
                                 <entry type="String" property="vorname" caption="Vorname" width="110" />
                                 <entry type="String" property="nachname" caption="Nachname" width="110" />
-                                <entry type="" property="Funktion" generator="ch.gabrieltransport.auftragverwaltung.ui.DriverFunctionColumn" width="95" />
-                                <entry type="" property="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
-                                <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
+                                <entry type="" property="Funktion" generator="ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverFunctionColumn" width="95" />
+                                <entry type="" property="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
+                                <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn.Generator" expandRatio="0.05" />
                             </x:entityProperties>
                             <x:constraints gridx="1" gridy="2" weighty="0.1" weightx="0.1" width="100%" height="100%" />
                             <x:typeArguments>
@@ -130,13 +138,13 @@
                                 <entry type="String" property="kennzeichen" caption="Kennzeichen" width="100" />
                                 <entry type="Integer" property="nutzlast" caption="Nutzlast" width="75" />
                                 <entry type="String" property="fahrzeugFunktion.beschreibung" caption="Funktion" width="90" />
-                                <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
-                                <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
-                                <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
+                                <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.1" />
+                                <entry type="" property="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
+                                <entry type="" property="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn.Generator" expandRatio="0.05" />
                             </x:entityProperties>
                             <x:constraints gridx="1" gridy="2" weighty="0.1" weightx="0.1" width="100%" height="100%" />
                             <x:typeArguments>
@@ -157,13 +165,13 @@
                         <entry type="String" property="kennzeichen" caption="Kennzeichen" width="100" />
                         <entry type="Integer" property="nutzlast" caption="Nutzlast" width="75" />
                         <entry type="String" property="fahrzeugFunktion.beschreibung" caption="Funktion" width="90" />
-                        <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                        <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                        <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                        <entry type="" property="Donnerstag" caption="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                        <entry type="" property="Freitag" caption="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.1" />
-                        <entry type="" property="Samstag" caption="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.05" />
-                        <entry type="" property="Sonntag" caption="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.WeekDayTaskColumn.Generator" expandRatio="0.05" />
+                        <entry type="" property="Montag" caption="Montag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                        <entry type="" property="Dienstag" caption="Dienstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                        <entry type="" property="Mittwoch" caption="Mittwoch" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                        <entry type="" property="Donnerstag" caption="Donnerstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                        <entry type="" property="Freitag" caption="Freitag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.1" />
+                        <entry type="" property="Samstag" caption="Samstag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.05" />
+                        <entry type="" property="Sonntag" caption="Sonntag" generator="ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn.Generator" expandRatio="0.05" />
                     </x:entityProperties>
                     <x:constraints gridx="1" gridy="2" weighty="1.0" weightx="1.0" width="100%" height="100%" />
                     <x:typeArguments>

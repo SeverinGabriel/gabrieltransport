@@ -402,6 +402,10 @@ public class taskDetail extends XdevView {
 			lblDriver.setVisible(false);
 			horizontalLayout5.setVisible(false);
 			horizontalLayout6.setVisible(false);
+			//tsDriver.getSelectedItems().clear();
+			for(BeanItem<Fahrer> f : tsDriver.getSelectedItems()){
+				tsDriver.unselect(f.getBean());
+			}
 		}else{
 			chkUmzug.setVisible(true);
 			hlTrailer.setVisible(true);

@@ -1,5 +1,5 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.calendarViews;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +18,12 @@ import com.xdev.ui.XdevVerticalLayout;
 import com.xdev.ui.entitycomponent.table.XdevTable;
 
 import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
-import ch.gabrieltransport.auftragverwaltung.business.refresher.GuiListenerSingleton;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrzeugauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeug;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
+import ch.gabrieltransport.auftragverwaltung.ui.taskDetail;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
+import ch.gabrieltransport.auftragverwaltung.ui.taskDetail.Callback;
 
 public class WeekDayTaskColumn extends XdevHorizontalLayout{
 
@@ -114,7 +115,7 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 				   new taskDetail.Callback() {
 				      public void onDialogResult(boolean result) {
 				    	  //GuiListenerSingleton.getInstance().updated();
-				    	  Broadcaster.broadcast("test");
+				    	  Broadcaster.broadcast("ALL");
 				      }
 				   });
 		win.setWidth("800");
@@ -124,14 +125,7 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 		win.setModal(true);
 		win.setContent(taskWindow);
 		this.getUI().addWindow(win);
-		
-		
-		
-		
-		
 	}
-
-	
 	public void update() {
 		verticalLayout2.removeAllComponents();
 		final FahrzeugauftragDAO auftragServiceFacade = new FahrzeugauftragDAO();
@@ -142,6 +136,8 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 			auftragField.setCaption(auftrag.getAuftrag().getBezeichung());
 			auftragField.setHtmlContentAllowed(true);
 			StringBuilder sb = new StringBuilder();
+			String beschreibung = auftrag.getAuftrag().getBeschreibung().replace("\n", "<br />");
+			sb.append("<table><tr><td>" + beschreibung + "</td><td style='border-left:2px solid white'>");
 			sb.append("<table>");
 			auftrag.getAuftrag().getFahrerauftrags().
 				forEach(s -> sb.append("<tr><td>" + s.getFahrer().getVorname() + 
@@ -151,7 +147,7 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 				sb.append("<tr><td colspan='2'>Anhänger: " + auftrag.getAnhaenger().getNummer() + "</td></tr>");
 			}
 			sb.append("</table>");
-			
+			sb.append("</td></tr></table>");
 			auftragField.setDescription(sb.toString());
 			auftragField.addStyleName("borderless");
 			if(auftrag.getGarage()){
@@ -183,7 +179,7 @@ public class WeekDayTaskColumn extends XdevHorizontalLayout{
 							      public void onDialogResult(boolean result) {
 							    	  update();
 							    	  //GuiListenerSingleton.getInstance().updated();
-							    	  Broadcaster.broadcast("test");
+							    	  Broadcaster.broadcast("ALL");
 							    	  
 							      }
 							   });

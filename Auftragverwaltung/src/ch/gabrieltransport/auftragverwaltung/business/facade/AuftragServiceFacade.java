@@ -33,7 +33,6 @@ public class AuftragServiceFacade {
 	@Transactional
 	public void deleteAuftrag(Auftrag auftrag){
 		try{
-	    	
 	    	boAuftragService.deleteAuftrag(auftrag);
 	    	boLogService.logMessage("Auftrag " + auftrag.getBezeichung() + " gelöscht");
 	    	
@@ -49,6 +48,7 @@ public class AuftragServiceFacade {
 	    	linkTasks(auftrag, fahrzeugauftraege, fahrer);
 	    	boAuftragService.persistAuftrag(auftrag);
 	    	for(Fahrerauftrag fa: fahrer){
+	    		fa.setFerien(false);
 	    		boFaAService.persistFahrerAuftrag(fa);
 	    	}
 	    	boLogService.logMessage("Auftrag " + auftrag.getBezeichung() + " erstellt");
@@ -64,6 +64,7 @@ public class AuftragServiceFacade {
 		try{	
 			deleteRelationsFromTask(auftrag);
 			for(Fahrerauftrag fa: fahrer){
+				fa.setFerien(false);
 	    		boFaAService.persistFahrerAuftrag(fa);
 	    	}
 			linkTasks(auftrag, fahrzeugauftraege, fahrer);

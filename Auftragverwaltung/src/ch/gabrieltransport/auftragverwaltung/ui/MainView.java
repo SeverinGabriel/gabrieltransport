@@ -30,11 +30,13 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.ClientConnector.DetachEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
@@ -64,7 +66,6 @@ import com.xdev.ui.navigation.Navigation;
 import com.xdev.ui.util.NestedProperty;
 import com.xdev.ui.util.wizard.XDEV;
 
-import ch.gabrieltransport.auftragverwaltung.business.refresher.GuiListenerSingleton;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger;
 import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
@@ -78,12 +79,16 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrerfunktion;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.CurrentWeek;
 import ch.gabrieltransport.auftragverwaltung.ui.calendar.Week;
+import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayEmployeeColumn;
+import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTaskColumn;
+import ch.gabrieltransport.auftragverwaltung.ui.calendarViews.WeekDayTrailerColumn;
+import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverFunctionColumn;
+import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.driverDetail;
 
-public class MainView extends XdevView implements BroadcastListener {
+public class MainView extends XdevView implements BroadcastListener, com.vaadin.server.ClientConnector.DetachListener {
 
 	
 	private CurrentWeek currWeek = new CurrentWeek();
-	private Boolean hasChanged = false;
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
 	private List<WeekDayEmployeeColumn> weekDayEmployee = new ArrayList<WeekDayEmployeeColumn>();
 	/**
@@ -93,13 +98,9 @@ public class MainView extends XdevView implements BroadcastListener {
 		super();
 		this.initUI();
 		Broadcaster.register(this);
-		//GuiListenerSingleton.getInstance().addObserver(this);
 		updateLabels();
 		tblEmployee.getBeanContainerDataSource().addAll(new FahrerDAO().findAll());
-		fillLegend();
-		
-		//Broadcaster.register(this);
-		
+		fillLegend();	
 }
 	
 
@@ -112,22 +113,23 @@ public class MainView extends XdevView implements BroadcastListener {
 	private void fillLegend(){
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("<p>Aufträge</p>");
+		sb.append("Aufträge");
 		sb.append("<table>");
 				
 		sb.append("<tr><td style='width:30px;border:2px solid blue;'></td><td>Garage</td></tr>");
 		sb.append("<tr><td style='width:30px;border:2px solid orange;'></td><td>Umzug</td></tr>");
-		sb.append("<tr><td style='width:30px;border:2px solid red;'></td><td>benötigt Möbellift</td></tr>");
+		sb.append("<tr><td style='width:30px;border:2px solid red;'></td><td>Benötigt Möbellift</td></tr>");
 			
 		sb.append("</table>");
 		sb.append("<br />");
-		sb.append("<p>Personal/Anhänger</p>");
+		sb.append("Personal/Anhänger");
 		sb.append("<table>");
 				
 		sb.append("<tr><td style='width:30px;background: green;'></td><td>Ganzer Tag frei</td></tr>");
 		sb.append("<tr><td style='width:30px;background: yellow;'></td><td>Bis zu 4h belegt</td></tr>");
 		sb.append("<tr><td style='width:30px;background: orange;'></td><td>Bis zu 7h belegt</td></tr>");
 		sb.append("<tr><td style='width:30px;background: red;'></td><td>Ganzer Tag belegt</td></tr>");
+		sb.append("<tr><td style='width:30px;background: blue;'></td><td>Ferien</td></tr>");
 			
 		sb.append("</table>");
 		
@@ -136,9 +138,6 @@ public class MainView extends XdevView implements BroadcastListener {
 	}
 
 	public void update(){
-		
-		
-		hasChanged = true;
 		tblTask.refreshRowCache();
 		Layout tab = (Layout) tabSheet.getSelectedTab();
 
@@ -172,6 +171,25 @@ public class MainView extends XdevView implements BroadcastListener {
 				"Freitag<br/>" + current.plusDays(4).format(formatter), 
 				"Samstag<br/>" + current.plusDays(5).format(formatter), 
 				"Sonntag<br/>" + current.plusDays(6).format(formatter));
+		
+		tblEmployee.setColumnHeaders("Vorname", "Nachname","Funktion", 
+				"Montag<br/>" + current.format(formatter), 
+				"Dienstag<br/>" + current.plusDays(1).format(formatter),
+				"Mittwoch<br/>" + current.plusDays(2).format(formatter), 
+				"Donnerstag<br/>" + current.plusDays(3).format(formatter), 
+				"Freitag<br/>" + current.plusDays(4).format(formatter), 
+				"Samstag<br/>" + current.plusDays(5).format(formatter), 
+				"Sonntag<br/>" + current.plusDays(6).format(formatter));
+		
+		tblTrailer.setColumnHeaders("#", "Kennzeichen", "Nutzlast", "Funktion", 
+				"Montag<br/>" + current.format(formatter), 
+				"Dienstag<br/>" + current.plusDays(1).format(formatter),
+				"Mittwoch<br/>" + current.plusDays(2).format(formatter), 
+				"Donnerstag<br/>" + current.plusDays(3).format(formatter), 
+				"Freitag<br/>" + current.plusDays(4).format(formatter), 
+				"Samstag<br/>" + current.plusDays(5).format(formatter), 
+				"Sonntag<br/>" + current.plusDays(6).format(formatter));
+		
 	}
 
 	/**
@@ -198,6 +216,12 @@ public class MainView extends XdevView implements BroadcastListener {
 		currWeek.setPreviousWeek();
 		updateLabels();
 		update();
+	}
+	
+	@Override
+	public void detach(DetachEvent event) {
+		Broadcaster.unregister(this);
+		super.detach();
 	}
 	
 	
@@ -255,7 +279,7 @@ public class MainView extends XdevView implements BroadcastListener {
 				((BeanItem<Fahrer>)event.getItem()).getBean(), 
 				currWeek.getCurrentWeek().getStartDate());
 		Window win = new Window();
-		win.setWidth("800");
+		win.setWidth("1000");
 		win.setHeight("1050");
 		win.center();
 		win.setModal(true);
@@ -264,7 +288,16 @@ public class MainView extends XdevView implements BroadcastListener {
 	}
 	
 	public void receiveBroadcast(String message) {
-		update();
+		if (message.startsWith("Session abgelaufen")){
+			Notification.show(message, Notification.Type.WARNING_MESSAGE);
+		}
+		if (message.equalsIgnoreCase("ALL")){
+			update();
+		}
+		if (message.equalsIgnoreCase("DRIVER")){
+			tblEmployee.refreshRowCache();
+		}
+		
 	}
 
 
@@ -286,6 +319,28 @@ public class MainView extends XdevView implements BroadcastListener {
  * @eventHandlerDelegate Do NOT delete, used by UI designer!
  */
 private void btnLog_buttonClick(Button.ClickEvent event) {
+	Navigation.to("log").navigate();
+}
+
+
+/**
+ * Event handler delegate method for the {@link XdevButton} {@link #btnAccount}.
+ *
+ * @see Button.ClickListener#buttonClick(Button.ClickEvent)
+ * @eventHandlerDelegate Do NOT delete, used by UI designer!
+ */
+private void btnAccount_buttonClick(Button.ClickEvent event) {
+	Navigation.to("user").navigate();
+}
+
+
+/**
+ * Event handler delegate method for the {@link XdevButton} {@link #btnAdmin}.
+ *
+ * @see Button.ClickListener#buttonClick(Button.ClickEvent)
+ * @eventHandlerDelegate Do NOT delete, used by UI designer!
+ */
+private void btnAdmin_buttonClick(Button.ClickEvent event) {
 	Navigation.to("admin").navigate();
 }
 
@@ -299,6 +354,8 @@ private void initUI() {
 	this.gridLayout = new XdevGridLayout();
 	this.horizontalLayout = new XdevHorizontalLayout();
 	this.horizontalLayout6 = new XdevHorizontalLayout();
+	this.btnAccount = new XdevButton();
+	this.btnAdmin = new XdevButton();
 	this.horizontalLayout5 = new XdevHorizontalLayout();
 	this.button = new XdevButton();
 	this.btnWeek = new XdevButton();
@@ -328,6 +385,10 @@ private void initUI() {
 	this.tblTask = new XdevTable<>();
 
 	this.horizontalLayout.setMargin(new MarginInfo(false));
+	this.horizontalLayout6.setMargin(new MarginInfo(false));
+	this.btnAccount.setCaption("Passwort ändern");
+	this.btnAdmin.setCaption("Admin");
+	this.btnAdmin.setVisible(false);
 	this.horizontalLayout5.setMargin(new MarginInfo(false, false, false, true));
 	this.button.setIcon(FontAwesome.CARET_LEFT);
 	this.button.setCaption("");
@@ -462,6 +523,16 @@ private void initUI() {
 			"fahrzeugFunktion", "nutzlast", "nummer");
 	this.containerFilterComponent.setSearchableProperties("kennzeichen", "fahrzeugFunktion.beschreibung");
 
+	this.btnAccount.setSizeUndefined();
+	this.horizontalLayout6.addComponent(this.btnAccount);
+	this.horizontalLayout6.setComponentAlignment(this.btnAccount, Alignment.MIDDLE_CENTER);
+	this.btnAdmin.setSizeUndefined();
+	this.horizontalLayout6.addComponent(this.btnAdmin);
+	this.horizontalLayout6.setComponentAlignment(this.btnAdmin, Alignment.MIDDLE_CENTER);
+	final CustomComponent horizontalLayout6_spacer = new CustomComponent();
+	horizontalLayout6_spacer.setSizeFull();
+	this.horizontalLayout6.addComponent(horizontalLayout6_spacer);
+	this.horizontalLayout6.setExpandRatio(horizontalLayout6_spacer, 1.0F);
 	this.button.setSizeUndefined();
 	this.horizontalLayout5.addComponent(this.button);
 	this.horizontalLayout5.setComponentAlignment(this.button, Alignment.TOP_CENTER);
@@ -491,8 +562,8 @@ private void initUI() {
 	this.horizontalLayout6.setWidth(100, Unit.PERCENTAGE);
 	this.horizontalLayout6.setHeight(40, Unit.PIXELS);
 	this.horizontalLayout.addComponent(this.horizontalLayout6);
-	this.horizontalLayout.setComponentAlignment(this.horizontalLayout6, Alignment.MIDDLE_CENTER);
-	this.horizontalLayout.setExpandRatio(this.horizontalLayout6, 20.0F);
+	this.horizontalLayout.setComponentAlignment(this.horizontalLayout6, Alignment.TOP_CENTER);
+	this.horizontalLayout.setExpandRatio(this.horizontalLayout6, 30.0F);
 	this.horizontalLayout5.setWidth(20, Unit.PERCENTAGE);
 	this.horizontalLayout5.setHeight(40, Unit.PIXELS);
 	this.horizontalLayout.addComponent(this.horizontalLayout5);
@@ -590,6 +661,8 @@ private void initUI() {
 
 	Authorization.evaluateComponents(this);
 
+	this.btnAccount.addClickListener(event -> this.btnAccount_buttonClick(event));
+	this.btnAdmin.addClickListener(event -> this.btnAdmin_buttonClick(event));
 	this.button.addClickListener(event -> this.button_buttonClick(event));
 	this.btnWeek.addClickListener(event -> this.btnWeek_buttonClick(event));
 	this.button2.addClickListener(event -> this.button2_buttonClick(event));
@@ -606,7 +679,7 @@ private void initUI() {
 } // </generated-code>
 
 // <generated-code name="variables">
-private XdevButton button, btnWeek, button2, btnLog, btnLogout;
+private XdevButton btnAccount, btnAdmin, button, btnWeek, button2, btnLog, btnLogout;
 private XdevLabel lblLegend, lblWeekInterval, lblYear;
 private XdevTable<Anhaenger> tblTrailer;
 private XdevHorizontalLayout horizontalLayout, horizontalLayout6, horizontalLayout5, horizontalLayout7,

@@ -1,5 +1,5 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.fahrerViews;
 
 import java.util.ArrayList;
 import java.util.Comparator;

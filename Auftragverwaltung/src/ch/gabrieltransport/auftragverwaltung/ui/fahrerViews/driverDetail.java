@@ -1,6 +1,7 @@
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.fahrerViews;
 
 import ch.gabrieltransport.auftragverwaltung.business.facade.FahrerAuftragServiceFacade;
+import ch.gabrieltransport.auftragverwaltung.business.refresher.Broadcaster;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerauftragDAO;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Auftrag_;
@@ -8,6 +9,7 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag_;
+import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverTaskDeleteColumn.Generator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ import javax.transaction.Transactional.TxType;
 import com.vaadin.data.Property;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
@@ -53,6 +56,8 @@ public class driverDetail extends XdevView {
 		dateFrom.setValue(Date.from(weekStart.atZone(ZoneId.systemDefault()).toInstant()));
 		dateUntil.setValue(Date.from(weekStart.plusDays(6).atZone(ZoneId.systemDefault()).toInstant()));
 		comboBox.select(driver.getIdfahrer());
+		cmbAbsence.addItems("Ferien", "Kompensation","Krankheit", "Militär");
+		cmbAbsence.select("Ferien");
 	}
 
 	/**
@@ -137,10 +142,15 @@ public class driverDetail extends XdevView {
 			if(ldStart != null && ldEnd != null){
 				LocalDateTime ldtStart = LocalDateTime.of(ldStart, ltStart);
 				LocalDateTime ldtEnd = LocalDateTime.of(ldEnd, ltEnd);
-				Fahrerauftrag fa = faFacade.persistHoliday(ldtStart, ldtEnd, comboBox.getSelectedItem().getBean());
+				String test = "null";
+				if(cmbAbsence.getValue() != null){
+					test = (String) cmbAbsence.getValue();
+				}
+				Fahrerauftrag fa = faFacade.persistHoliday(ldtStart, ldtEnd, comboBox.getSelectedItem().getBean(), test);
 				tblDriverTask.getBeanContainerDataSource().addBean(fa);
 			}
 		}
+		Broadcaster.broadcast("DRIVER");
 	}
 
 	/*
@@ -156,6 +166,7 @@ public class driverDetail extends XdevView {
 		this.dateUntil = new XdevPopupDateField();
 		this.tblDriverTask = new XdevTable<>();
 		this.horizontalLayout2 = new XdevHorizontalLayout();
+		this.cmbAbsence = new XdevComboBox<>();
 		this.holidayDateFrom = new XdevPopupDateField();
 		this.txtTimeFrom = new XdevTextField();
 		this.holidayDateUntil = new XdevPopupDateField();
@@ -174,8 +185,13 @@ public class driverDetail extends XdevView {
 		this.tblDriverTask.setColumnHeader("vonDatum", "Von");
 		this.tblDriverTask.setColumnHeader("bisDatum", "Bis");
 		this.tblDriverTask.setColumnHeader("generated", " ");
-		this.horizontalLayout2.setCaption("Ferien erfassen");
+		this.horizontalLayout2.setCaption("Abwesenheit erfassen");
 		this.horizontalLayout2.setMargin(new MarginInfo(false));
+		this.cmbAbsence.setRequired(true);
+		this.cmbAbsence.setFilteringMode(FilteringMode.OFF);
+		this.cmbAbsence.setNullSelectionAllowed(false);
+		this.cmbAbsence.setAutoQueryData(false);
+		this.cmbAbsence.setNewItemsAllowed(true);
 		this.holidayDateFrom.setCaption("von");
 		this.txtTimeFrom.setColumns(5);
 		this.txtTimeFrom.setCaption("Zeit von (hh:mm)");
@@ -198,6 +214,9 @@ public class driverDetail extends XdevView {
 		horizontalLayout_spacer.setSizeFull();
 		this.horizontalLayout.addComponent(horizontalLayout_spacer);
 		this.horizontalLayout.setExpandRatio(horizontalLayout_spacer, 1.0F);
+		this.cmbAbsence.setSizeUndefined();
+		this.horizontalLayout2.addComponent(this.cmbAbsence);
+		this.horizontalLayout2.setComponentAlignment(this.cmbAbsence, Alignment.BOTTOM_CENTER);
 		this.holidayDateFrom.setSizeUndefined();
 		this.horizontalLayout2.addComponent(this.holidayDateFrom);
 		this.horizontalLayout2.setComponentAlignment(this.holidayDateFrom, Alignment.BOTTOM_CENTER);
@@ -259,6 +278,7 @@ public class driverDetail extends XdevView {
 	private XdevTable<Fahrerauftrag> tblDriverTask;
 	private XdevHorizontalLayout horizontalLayout, horizontalLayout2;
 	private XdevPopupDateField dateFrom, dateUntil, holidayDateFrom, holidayDateUntil;
+	private XdevComboBox<String> cmbAbsence;
 	private XdevGridLayout gridLayout;
 	private XdevTextField txtTimeFrom, txtTimeUntil;
 	private XdevComboBox<Fahrer> comboBox;

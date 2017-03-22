@@ -5,7 +5,9 @@
 <?template NONE?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.LoginAuthView?>
 <?import ch.gabrieltransport.auftragverwaltung.ui.MainView?>
-<?import ch.gabrieltransport.auftragverwaltung.ui.adminView?>
+<?import ch.gabrieltransport.auftragverwaltung.ui.adminViews.adminView?>
+<?import ch.gabrieltransport.auftragverwaltung.ui.adminViews.logView?>
+<?import ch.gabrieltransport.auftragverwaltung.ui.userDetail?>
 <?import com.xdev.security.authorization.ui.XdevAuthorizationNavigator?>
 <?import com.xdev.ui.XdevGridLayout?>
 <?import com.xdev.ui.XdevUI?>
@@ -17,8 +19,10 @@
     <XdevAuthorizationNavigator redirectViewName="home" x:target="MainUI" x:name="navigator" x:singleComponentContainer="MainUI">
         <x:views>
             <entry path="" class="LoginAuthView" />
-            <entry path="home" class="MainView" />
+            <entry path="log" class="logView" />
             <entry path="admin" class="adminView" />
+            <entry path="home" class="MainView" />
+            <entry path="user" class="userDetail" />
         </x:views>
     </XdevAuthorizationNavigator>
 </XdevUI>

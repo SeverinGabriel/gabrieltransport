@@ -1,5 +1,5 @@
 
-package ch.gabrieltransport.auftragverwaltung.ui;
+package ch.gabrieltransport.auftragverwaltung.ui.calendarViews;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
