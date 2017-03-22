@@ -1,0 +1,5 @@
+import ch.gabrieltransport.auftragverwaltung.entities.Auftrag
+findByBezeichnung(String bezeichnung)
+{
+   select * from Auftrag where Auftrag.bezeichung = :bezeichnung limit 1
+}

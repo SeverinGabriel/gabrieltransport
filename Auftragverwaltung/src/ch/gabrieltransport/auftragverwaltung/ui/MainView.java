@@ -548,10 +548,10 @@ private void initUI() {
 	this.horizontalLayout5.setExpandRatio(horizontalLayout5_spacer, 1.0F);
 	this.lblLegend.setSizeUndefined();
 	this.horizontalLayout7.addComponent(this.lblLegend);
-	this.horizontalLayout7.setComponentAlignment(this.lblLegend, Alignment.MIDDLE_CENTER);
+	this.horizontalLayout7.setComponentAlignment(this.lblLegend, Alignment.MIDDLE_RIGHT);
 	this.btnLog.setSizeUndefined();
 	this.horizontalLayout7.addComponent(this.btnLog);
-	this.horizontalLayout7.setComponentAlignment(this.btnLog, Alignment.MIDDLE_CENTER);
+	this.horizontalLayout7.setComponentAlignment(this.btnLog, Alignment.MIDDLE_RIGHT);
 	this.btnLogout.setSizeUndefined();
 	this.horizontalLayout7.addComponent(this.btnLogout);
 	this.horizontalLayout7.setComponentAlignment(this.btnLogout, Alignment.MIDDLE_RIGHT);
@@ -572,7 +572,7 @@ private void initUI() {
 	this.horizontalLayout7.setWidth(100, Unit.PERCENTAGE);
 	this.horizontalLayout7.setHeight(40, Unit.PIXELS);
 	this.horizontalLayout.addComponent(this.horizontalLayout7);
-	this.horizontalLayout.setComponentAlignment(this.horizontalLayout7, Alignment.MIDDLE_CENTER);
+	this.horizontalLayout.setComponentAlignment(this.horizontalLayout7, Alignment.MIDDLE_RIGHT);
 	this.horizontalLayout.setExpandRatio(this.horizontalLayout7, 30.0F);
 	this.lblWeekInterval.setSizeUndefined();
 	this.horizontalLayout2.addComponent(this.lblWeekInterval);

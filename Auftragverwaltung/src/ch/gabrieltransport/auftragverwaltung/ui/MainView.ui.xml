@@ -54,12 +54,12 @@
                 </XdevButton>
             </XdevHorizontalLayout>
             <XdevHorizontalLayout x:name="horizontalLayout7" margin="">
-                <x:constraints weightx="0.3" width="100%" height="40px" />
+                <x:constraints weightx="0.3" width="100%" alignment="MIDDLE_RIGHT" height="40px" />
                 <XdevLabel x:name="lblLegend" value="Legende">
-                    <x:constraints weightx="0.0" />
+                    <x:constraints weightx="0.0" alignment="MIDDLE_RIGHT" />
                 </XdevLabel>
                 <XdevButton caption="Log" x:name="btnLog">
-                    <x:constraints weightx="0.0" />
+                    <x:constraints weightx="0.0" alignment="MIDDLE_RIGHT" />
                     <x:subjectEvaluationExtension>
                         <entry resource="ch.gabrieltransport.auftragverwaltung.business.AuthorizationResources.LOGFILE_READ" strategy="VISIBLE" />
                     </x:subjectEvaluationExtension>

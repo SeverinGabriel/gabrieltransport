@@ -10,11 +10,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
@@ -22,6 +25,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Window;
 import com.xdev.dal.DAOs;
 import com.xdev.ui.XdevAbsoluteLayout;
@@ -39,6 +43,8 @@ import com.xdev.ui.entitycomponent.combobox.XdevComboBox;
 import com.xdev.ui.entitycomponent.listselect.XdevOptionGroup;
 import com.xdev.ui.entitycomponent.listselect.XdevTwinColSelect;
 import com.xdev.ui.filter.XdevContainerFilterComponent;
+
+import ch.gabrieltransport.auftragverwaltung.business.TaskDetailAvailabilitySearcher;
 import ch.gabrieltransport.auftragverwaltung.business.facade.AuftragServiceFacade;
 import ch.gabrieltransport.auftragverwaltung.dal.AnhaengerDAO;
 import ch.gabrieltransport.auftragverwaltung.dal.FahrerDAO;
@@ -52,27 +58,31 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrer;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag;
 
-public class taskDetail extends XdevView {
+public class taskDetail extends XdevView implements Observer{
 
 	public static class Callback{
 		public void onDialogResult(boolean result){}
 	}
-	/**
-	 * 
-	 */
+	private Callback callback;
+	private TaskDetailAvailabilitySearcher availableObjects;
+	
 	private static final String time_day = "Ganztägig";
 	private static final String time_morning = "Vormittag"; 
 	private static final String time_afternoon = "Nachmittag";
 	private static final String time_specific = "Spezifische Zeit"; 
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+	
 	private Auftrag currentTask = new Auftrag();
 	private Fahrzeugauftrag fahrzeugAuftrag = new Fahrzeugauftrag();
-	private Callback callback;
 	private AuftragServiceFacade auftragServiceFacade = new AuftragServiceFacade();
+	private Anhaenger selectedTrailer = null;
+	private List<Fahrer> selectedDriver = new ArrayList<Fahrer>();
+	
 	public taskDetail(Fahrzeug fz) {
 		super();
 		this.initUI();
-		initTrailer(fz);
+		availableObjects = new TaskDetailAvailabilitySearcher(fz);
+		availableObjects.addObserver(this);
 		optionGroup.addItems(time_day, time_morning, time_afternoon, time_specific);
 	}
 	public taskDetail(Fahrzeugauftrag auftrag, Callback callback) {
@@ -84,6 +94,7 @@ public class taskDetail extends XdevView {
 			txtADescription.setValue(currentTask.getBeschreibung());
 		}
 		this.fahrzeugAuftrag = auftrag;
+		availableObjects.setCurrentTrailer(auftrag);
 		setTime(fahrzeugAuftrag.getVonDatum(), fahrzeugAuftrag.getBisDatum());
 		fromDate.setValue(Date.from(fahrzeugAuftrag.getVonDatum().atZone(ZoneId.systemDefault()).toInstant()));
 		untilDate.setValue(Date.from(fahrzeugAuftrag.getBisDatum().atZone(ZoneId.systemDefault()).toInstant()));
@@ -94,6 +105,7 @@ public class taskDetail extends XdevView {
 				Fahrer iid = (Fahrer) i.next();
 				if (iid.getIdfahrer() == fa.getFahrer().getIdfahrer()){
 					tsDriver.select(iid);
+					selectedDriver.add(iid);
 				}
 			}
 		}
@@ -102,6 +114,7 @@ public class taskDetail extends XdevView {
 			for (Anhaenger test2: test) {
 				if (test2.getNummer() == auftrag.getAnhaenger().getNummer()){
 					cmbTrailer.select(test2);
+					selectedTrailer = test2;
 				}
 			}
 			//cmbTrailer.select(auftrag.getAnhaenger());
@@ -136,17 +149,36 @@ public class taskDetail extends XdevView {
 		fa.setMoebellift(chkLift.getValue());
 		fa.setUmzug(chkUmzug.getValue());
 	}
-	public void initTrailer(Fahrzeug fz){
+	public void initTrailer(){
 		cmbTrailer.removeAllItems();
-		if(fz.getAnhaenger()){
+		if(availableObjects.vehicleHasTrailer()){
 			hlTrailer.setVisible(true);
-			if(fz.getAnhaengertyp() != null){
-				cmbTrailer.getBeanContainerDataSource().addAll(new AnhaengerDAO().getAllbyTyp(fz.getAnhaengertyp()));
-			}else{
-				cmbTrailer.getBeanContainerDataSource().addAll(new AnhaengerDAO().findAll());
+			cmbTrailer.getBeanContainerDataSource().addAll(availableObjects.getAvailableTrailer());
+			
+			if(selectedTrailer != null){
+			List<Anhaenger> trailer = (List<Anhaenger>)cmbTrailer.getItemIds();
+			for (Anhaenger singleTrailer: trailer) {
+				if (singleTrailer.getNummer() == selectedTrailer.getNummer()){
+					cmbTrailer.select(singleTrailer);
+				}
+			}
 			}
 		}else{
 			hlTrailer.setVisible(false);
+		}
+	}
+	
+	public void initPersonal(){
+		tsDriver.removeAllItems();
+		
+		tsDriver.getBeanContainerDataSource().addAll(availableObjects.getAvailablePersonal());
+		for(Fahrer f: selectedDriver){
+			for (Iterator i = tsDriver.getItemIds().iterator(); i.hasNext();) {
+				Fahrer iid = (Fahrer) i.next();
+				if (iid.getIdfahrer() == f.getIdfahrer()){
+					tsDriver.select(iid);
+				}
+			}
 		}
 	}
 
@@ -162,6 +194,12 @@ public class taskDetail extends XdevView {
 			gridLayout2.setVisible(true);
 		}
 		else {
+			availableObjects.setTimeFrom(getTime(true));
+			LocalTime timeUntil = getTime(false);
+			if (timeUntil == LocalTime.parse("00:00")){
+				timeUntil = LocalTime.MAX;
+			}
+			availableObjects.setTimeUntil(timeUntil);
 			gridLayout2.setVisible(false);
 		}
 	}
@@ -187,7 +225,7 @@ public class taskDetail extends XdevView {
 	private void cmbVehicle_valueChange(Property.ValueChangeEvent event) {
 		lblWeight.setValue( String.valueOf(cmbVehicle.getSelectedItem().getBean().getNutzlast()) + " kg");
 		lblSign.setValue(cmbVehicle.getSelectedItem().getBean().getKennzeichen());
-		initTrailer(cmbVehicle.getSelectedItem().getBean());
+		availableObjects.setVehicle(cmbVehicle.getSelectedItem().getBean());
 	}
 	/**
 	 * Event handler delegate method for the {@link XdevButton}
@@ -212,46 +250,64 @@ public class taskDetail extends XdevView {
 	private void btnSave_buttonClick(Button.ClickEvent event) {
 		currentTask.setBezeichung(txtDescription.getValue());
 		currentTask.setBeschreibung(txtADescription.getValue());
+		boolean continueSave = true;
 		
+		try{
 		LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		if(ldFrom.isBefore(ldUntil) || ldFrom.isEqual(ldUntil)){
-			LocalDateTime ldt = LocalDateTime.of(ldUntil, getTime(false));
-			currentTask.setBisDatum(ldt);
-			ldt = LocalDateTime.of(ldFrom, getTime(true));
-			currentTask.setVonDatum(ldt);
-			
-			List<Fahrerauftrag> driverList = new ArrayList<Fahrerauftrag>();
-			for(BeanItem<Fahrer> bean : tsDriver.getSelectedItems()){
-		    	Fahrerauftrag faA = new Fahrerauftrag();
-		    	faA.setAuftrag(currentTask);
-		    	faA.setBisDatum(currentTask.getBisDatum());
-		    	faA.setVonDatum(currentTask.getVonDatum());
-		    	faA.setFahrer(bean.getBean());
-				driverList.add(faA);
-			}
-			List<Fahrzeugauftrag> fahrzeugauftraege = 
-					Arrays.asList(auftragServiceFacade.createTaskFromVehicle(currentTask, cmbVehicle.getSelectedItem().getBean()));
-			for (Fahrzeugauftrag fa: fahrzeugauftraege) {
-				if(cmbTrailer.getValue() != null){
-					fa.setAnhaenger((Anhaenger)cmbTrailer.getValue());
-				}else{
-					fa.setAnhaenger(null);
+			if(ldFrom.isBefore(ldUntil) || ldFrom.isEqual(ldUntil)){
+				try{
+					LocalDateTime ldt = LocalDateTime.of(ldUntil, getTime(false));
+					currentTask.setBisDatum(ldt);
+					ldt = LocalDateTime.of(ldFrom, getTime(true));
+					currentTask.setVonDatum(ldt);
 				}
-				saveCheckboxFields(fa);
-			}
-			
-			if(currentTask.getIdAuftrag() == 0){
-				auftragServiceFacade.persistAuftrag(currentTask, fahrzeugauftraege, driverList);
+				catch(Exception e){
+					new Notification("Zeitformat inkorrekt",
+						    "Bitte Zeiten im Format (hh:mm) z.B. 14:45 angeben",
+						    Type.ERROR_MESSAGE, true)
+						    .show(Page.getCurrent());
+					continueSave = false;
+				}
+				if(continueSave){
+					List<Fahrerauftrag> driverList = new ArrayList<Fahrerauftrag>();
+					for(BeanItem<Fahrer> bean : tsDriver.getSelectedItems()){
+				    	Fahrerauftrag faA = new Fahrerauftrag();
+				    	faA.setAuftrag(currentTask);
+				    	faA.setBisDatum(currentTask.getBisDatum());
+				    	faA.setVonDatum(currentTask.getVonDatum());
+				    	faA.setFahrer(bean.getBean());
+						driverList.add(faA);
+					}
+					List<Fahrzeugauftrag> fahrzeugauftraege = 
+							Arrays.asList(auftragServiceFacade.createTaskFromVehicle(currentTask, cmbVehicle.getSelectedItem().getBean()));
+					for (Fahrzeugauftrag fa: fahrzeugauftraege) {
+						if(cmbTrailer.getValue() != null){
+							fa.setAnhaenger((Anhaenger)cmbTrailer.getValue());
+						}else{
+							fa.setAnhaenger(null);
+						}
+						saveCheckboxFields(fa);
+					}
+					
+					if(currentTask.getIdAuftrag() == 0){
+						auftragServiceFacade.persistAuftrag(currentTask, fahrzeugauftraege, driverList);
+					}else{
+						auftragServiceFacade.mergeAuftrag(currentTask, fahrzeugauftraege, driverList);
+					}
+					callback.onDialogResult(true);
+					((Window)this.getParent()).close();
+				}
 			}else{
-				auftragServiceFacade.mergeAuftrag(currentTask, fahrzeugauftraege, driverList);
+				new Notification("Eingabefehler",
+					    "<br/>Enddatum vor Startdatum",
+					    Type.ERROR_MESSAGE, true)
+					    .show(Page.getCurrent());
 			}
-			callback.onDialogResult(true);
-			((Window)this.getParent()).close();
-		}else{
-			new Notification("Eingabefehler",
-				    "<br/>Enddatum vor Startdatum",
-				    Notification.TYPE_ERROR_MESSAGE, true)
+		} catch(Exception e){
+			new Notification("Fehler beim Speichern",
+				    e.getMessage(),
+				    Type.ERROR_MESSAGE, true)
 				    .show(Page.getCurrent());
 		}
 		
@@ -327,6 +383,7 @@ public class taskDetail extends XdevView {
 		if(untilDate.getValue() != null && fromDate.getValue() != null){
 			LocalDate ldUntil = untilDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			LocalDate ldFrom = fromDate.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			availableObjects.setDates(ldFrom, ldUntil);
 			if(ldFrom.getDayOfYear() == ldUntil.getDayOfYear()){
 				setupOptionGroup(true);
 			}else{
@@ -335,13 +392,13 @@ public class taskDetail extends XdevView {
 		}
 	}
 	
-	private void setupOptionGroup(boolean full){
+	private void setupOptionGroup(boolean fullOptions){
 		String selected = "";
 		if (optionGroup.getValue() != null){
 			selected = optionGroup.getValue().toString();
 		}
 		optionGroup.removeAllItems();
-		if(full){
+		if(fullOptions){
 			optionGroup.addItems(time_day, time_morning, time_afternoon, time_specific);
 		}else{
 			optionGroup.addItems(time_day, time_specific);
@@ -360,6 +417,7 @@ public class taskDetail extends XdevView {
 	 */
 	private void cmbTrailer_valueChange(Property.ValueChangeEvent event) {
 		if(cmbTrailer.getValue() != null){
+			selectedTrailer = cmbTrailer.getSelectedItem().getBean();
 			lblTrailerSign.setValue(cmbTrailer.getSelectedItem().getBean().getKennzeichen());
 			lblTrailerWeight.setValue(String.valueOf(cmbTrailer.getSelectedItem().getBean().getNutzlast()) + " kg");
 			lblTrailerTyp.setValue(cmbTrailer.getSelectedItem().getBean().getAnhaengertyp().getBeschreibung());
@@ -413,6 +471,39 @@ public class taskDetail extends XdevView {
 			horizontalLayout5.setVisible(true);
 			horizontalLayout6.setVisible(true);
 		}
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		initTrailer();
+		initPersonal();
+	}
+	
+	/**
+	 * Event handler delegate method for the {@link XdevTextField}
+	 * {@link #lblTimeFrom}.
+	 *
+	 * @see FieldEvents.TextChangeListener#textChange(FieldEvents.TextChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void lblTimeFrom_textChange(FieldEvents.TextChangeEvent event) {
+		LocalTime time = LocalTime.parse(lblTimeFrom.getValue());
+		if (time != null){
+			availableObjects.setTimeFrom(time);
+		}
+	}
+	/**
+	 * Event handler delegate method for the {@link XdevTextField}
+	 * {@link #txtTimeUntil}.
+	 *
+	 * @see FieldEvents.TextChangeListener#textChange(FieldEvents.TextChangeEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void txtTimeUntil_textChange(FieldEvents.TextChangeEvent event) {
+		LocalTime time = LocalTime.parse(txtTimeUntil.getValue());
+		if (time != null){
+			availableObjects.setTimeUntil(time);
+		}		
 	}
 	/*
 	 * WARNING: Do NOT edit!<br>The content of this method is always regenerated by
@@ -581,7 +672,7 @@ public class taskDetail extends XdevView {
 		this.horizontalLayout3.addComponent(this.optionGroup);
 		this.horizontalLayout3.setExpandRatio(this.optionGroup, 20.0F);
 		this.gridLayout2.setWidth(100, Unit.PERCENTAGE);
-		this.gridLayout2.setHeight(90, Unit.PERCENTAGE);
+		this.gridLayout2.setHeight(90, Unit.PIXELS);
 		this.horizontalLayout3.addComponent(this.gridLayout2);
 		this.horizontalLayout3.setExpandRatio(this.gridLayout2, 30.0F);
 		this.cmbVehicle.setWidth(100, Unit.PERCENTAGE);
@@ -705,6 +796,8 @@ public class taskDetail extends XdevView {
 				taskDetail.this.optionGroup_valueChange(event);
 			}
 		});
+		this.lblTimeFrom.addTextChangeListener(event -> this.lblTimeFrom_textChange(event));
+		this.txtTimeUntil.addTextChangeListener(event -> this.txtTimeUntil_textChange(event));
 		this.cmbVehicle.addValueChangeListener(new Property.ValueChangeListener() {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
@@ -740,6 +833,8 @@ public class taskDetail extends XdevView {
 	private XdevTextField txtDescription, lblTimeFrom, txtTimeUntil;
 	private XdevVerticalLayout verticalLayout;
 	// </generated-code>
+
+	
 
 
 }

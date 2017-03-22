@@ -1,0 +1,5 @@
+import ch.gabrieltransport.auftragverwaltung.entities.Log
+findLog()
+{
+   select * from Log order by logtime desc limit 50
+}

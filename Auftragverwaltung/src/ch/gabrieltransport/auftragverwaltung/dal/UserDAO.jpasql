@@ -1,0 +1,5 @@
+import ch.gabrieltransport.auftragverwaltung.entities.User
+findCurrentUser(String username)
+{
+   select * from User where username = :username limit 1
+}

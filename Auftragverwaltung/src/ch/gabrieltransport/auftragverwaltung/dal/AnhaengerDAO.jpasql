@@ -1,0 +1,18 @@
+import java.time.LocalDateTime
+import ch.gabrieltransport.auftragverwaltung.entities.Anhaenger
+import ch.gabrieltransport.auftragverwaltung.entities.Fahrzeugauftrag
+
+
+findByTimeSpanAndType(LocalDateTime fromDate, LocalDateTime untilDate)
+{
+   select * from Anhaenger as a where 0 = 
+   (select count(fa.idfahrzeugauftrag) from Fahrzeugauftrag as fa 
+   	where ((:fromDate between fa.vonDatum and fa.bisDatum or :fromDate between fa.vonDatum and fa.bisDatum) 
+	or (fa.vonDatum between :fromDate and :untilDate or fa.bisDatum between :fromDate and :untilDate)) and fa.fahrzeug.anhaenger = a)
+}
+
+findVehicleTasks(LocalDateTime fromDate, LocalDateTime untilDate){
+	select * from Fahrzeugauftrag as fa 
+   	where ((:fromDate between fa.vonDatum and fa.bisDatum or :fromDate between fa.vonDatum and fa.bisDatum) 
+	or (fa.vonDatum between :fromDate and :untilDate or fa.bisDatum between :fromDate and :untilDate))
+}

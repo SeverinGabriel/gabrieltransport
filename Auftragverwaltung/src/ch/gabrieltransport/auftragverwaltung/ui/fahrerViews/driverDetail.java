@@ -10,6 +10,8 @@ import ch.gabrieltransport.auftragverwaltung.entities.Fahrer_;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag;
 import ch.gabrieltransport.auftragverwaltung.entities.Fahrerauftrag_;
 import ch.gabrieltransport.auftragverwaltung.ui.fahrerViews.DriverTaskDeleteColumn.Generator;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +23,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional.TxType;
-
 import com.vaadin.data.Property;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
@@ -113,19 +114,24 @@ public class driverDetail extends XdevView {
 		try{
 			return LocalTime.parse(textfield.getValue());
 		}catch(Exception e){
-			new Notification("Eingabefehler",
-				    "<br/>Zeitformat nicht korrekt",
-				    Notification.TYPE_ERROR_MESSAGE, true)
+			new Notification("Zeitformat inkorrekt",
+				    "Bitte Zeiten im Format (hh:mm) z.B. 14:45 angeben",
+				    Type.ERROR_MESSAGE, true)
 				    .show(Page.getCurrent());
 			return null;
 		}
 	}
 	
 	private LocalDate parseDateField(XdevPopupDateField dateField){
-		if(dateField.getValue() != null){
+		try{
 			return dateField.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		}catch(Exception e){
+			new Notification("Datumsformat inkorrekt",
+				    "Bitte Daten im Format (dd.mm.yy) angeben oder den Kalender verwenden",
+				    Type.ERROR_MESSAGE, true)
+				    .show(Page.getCurrent());
+			return null;
 		}
-		return null;
 	}
 	/**
 	 * Event handler delegate method for the {@link XdevButton} {@link #button}.
